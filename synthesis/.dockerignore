@@ -1,0 +1,11 @@
+# Send only Docker build inputs.
+*
+
+!docker/
+!docker/**
+!wildawm/
+!wildawm/**
+!pyproject.toml
+
+**/__pycache__/
+**/*.py[oc]

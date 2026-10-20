@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WildAWM Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css?v=21">
+</head>
+<body>
+<div id="app">
+  <header class="header">
+    <div class="header-brand">
+      <svg class="logo" width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="7" fill="#4F46E5"/>
+        <path d="M8 14L12 10L16 14L12 18Z" fill="white" opacity="0.9"/>
+        <path d="M14 10L18 14L14 18L10 14Z" fill="white" opacity="0.5" transform="translate(4,0)"/>
+      </svg>
+      <span class="header-title">WildAWM</span>
+      <span class="header-subtitle">Sandbox Dashboard</span>
+    </div>
+    <nav class="header-nav" id="mainNav">
+      <button class="nav-tab active" data-view="worlds">Worlds</button>
+      <button class="nav-tab" data-view="tasks">Tasks</button>
+      <button class="nav-tab" data-view="profiles">Profiles & Events</button>
+    </nav>
+    <div class="header-world" id="activeWorldBadge" style="display:none">
+      <span class="world-badge" id="activeWorldName"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="view active" id="view-worlds"></div>
+    <div class="view" id="view-tasks"></div>
+    <div class="view" id="view-profiles"></div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/api.js?v=24"></script>
+<script src="/views/worlds.js?v=22"></script>
+<script src="/views/database.js?v=20"></script>
+<script src="/views/files.js?v=20"></script>
+<script src="/views/tasks.js?v=2"></script>
+<script src="/views/profiles.js?v=20"></script>
+<script src="/views/agent.js?v=26"></script>
+<script src="/app.js?v=21"></script>
+</body>
+</html>

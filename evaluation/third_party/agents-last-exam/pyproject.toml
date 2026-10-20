@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-last-exam"
+version = "0.1.0"
+description = "Agent benchmark framework. Upper-layer-only replacement for agenthle orchestration."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    # Framework essentials only. Per-agent deps live in
+    # `ale_run/agents/<agent>/pyproject.toml` (uv workspace members below).
+    "openenv-core==0.3.0",
+    "cua-bench==0.2.7",        # framework needs cb.DesktopSession for env/session
+    "pydantic>=2.0",
+    "httpx>=0.27",
+    "anyio>=4",
+    "requests>=2.28",
+    "huggingface-hub>=0.28,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+]
+
+[tool.uv.workspace]
+# Each agent declares its own deps in ale_run/agents/<agent>/pyproject.toml.
+# Per-agent docker images can `uv sync` against just their own pyproject
+# for true isolation.
+#
+# IMPORTANT: To install agent deps into the dev venv, you must use:
+#     uv sync --all-packages --extra dev
+# Plain `uv sync` only installs root deps (cua-bench / pydantic / etc.)
+# and skips every agent's deps. There's no "default install all members"
+# uv setting; it's an explicit flag.
+members = ["ale_run/agents/*", "tasks"]
+exclude = [
+    "ale_run/agents/_assets",   # vendored MCP server JS, not a Python package
+    "ale_run/agents/deployers", # shared deployer base classes, not an agent
+]
+
+[tool.hatch.build.targets.wheel]
+# Two top-level packages: framework (`ale_run/`) and task library (`tasks/`).
+# `tasks/` is a PEP 420 namespace package — no __init__.py files.
+packages = ["ale_run", "tasks"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

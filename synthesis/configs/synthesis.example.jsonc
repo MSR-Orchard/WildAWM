@@ -1,0 +1,44 @@
+// Synthesis config (JSONC): point WILDAWM_SYNTHESIS_CONFIG at a copy; env vars take precedence.
+
+{
+  // models.json refs, e.g. ["my-provider/model-a", "my-provider/model-b"]; there is no default pool.
+  "ensemble_models": [],
+
+  // Harnesses: claude-code, opencode, codex, nanobot, openclaw, hermes.
+  "ensemble_harnesses": [],
+
+  // Cells sampled per ensemble tier (hinted) and per bare difficulty gate.
+  "ensemble_n": 3,
+  "live_test_n": 3,
+
+  // Iteration and quality-gate limits.
+  "step_gate": 30,                  // reject when all hinted rollouts complete with fewer LLM calls
+  "max_deepen": 2,                  // re-author rounds after reject_too_easy
+  "max_ease": 2,                    // re-author rounds after reject_too_hard
+  "max_interface_reauthor": 2,      // re-author rounds after interface violations
+  "max_cave_fix": 2,                // caveat-repair rounds
+  "max_fix_iters": 2,               // verifier-fix rounds
+  "max_gen_iters": 2,               // full generation attempts per task slot
+  "max_agree_fix": 2,               // three-level judgment agreement repairs
+  "max_post_fix_validate_fixes": 2,
+  "max_sketch_rounds": 2,
+  "max_world_patch_iters": 2,
+
+  // Shared evolving event-skill library used by world synthesis.
+  "world_syn_skill_timeout": 1800,
+  "world_syn_skill_max_turns": 40,
+  "world_syn_skill_index_chars": 24000,
+
+  // Difficulty bands: completion counts over live_test_n bare rollouts (hard k<=1, medium k=2).
+  "bare_hard_max_completed": 1,
+  "bare_medium_min_completed": 2,
+  "bare_medium_max_completed": 2,
+
+  // XAI policy; counterfactual sampling is stable over the final live rollout set.
+  "xai_require_image_decisive": true,
+  "counterfactual_probe_rate": 1.0,
+
+  // Task-synthesis skill pool limits; a full pool only allows rewrite, replace or delete.
+  "xai_max_synthesis_skills": 50,
+  "xai_synthesis_skill_max_chars": 2000
+}

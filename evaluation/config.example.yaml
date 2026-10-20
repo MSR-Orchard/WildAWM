@@ -1,0 +1,158 @@
+# Copy to config.yaml and edit. Keys omitted from config.yaml fall back to this file.
+# Any benchmark section below may override agent / vision / judge / opencode / sandbox / run.
+
+agent:                          # tested policy model (text only)
+  model: ""                     # empty: discovered from GET {base_url}/models
+  base_url: http://127.0.0.1:8000/v1
+  api_key: EMPTY
+  api: openai                   # openai (chat completions) | anthropic (messages)
+  sandbox_base_url: null        # URL sandboxes use instead of base_url, if different
+  reasoning_effort: high
+  temperature: 1.0
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+  presence_penalty: 1.5
+  repetition_penalty: 1.0
+  context_window: 102400
+  max_output_tokens: 16384
+  request_timeout: 1800
+
+vision:                         # multimodal model behind the vision_describe_image tool
+  model: Qwen/Qwen3.6-35B-A3B
+  base_url: http://127.0.0.1:8001/v1
+  api_key: EMPTY
+  sandbox_base_url: null
+  reasoning_effort: none
+  max_output_tokens: 4096
+  request_timeout: 180
+  retries: 3
+
+judge:                          # LLM judge for benchmarks that need one
+  model: gpt-5.5
+  base_url: https://api.openai.com/v1
+  api_key: EMPTY
+  sandbox_base_url: null
+  reasoning_effort: high
+  max_output_tokens: 32768
+  request_timeout: 1800
+
+opencode:
+  version: 1.17.7               # host binary installed by scripts/setup_opencode.sh
+  max_turns: 256
+  auto_compact: true
+  completion_nudges: 3          # continuation prompts when the completion marker is missing
+  stream_retries: 2             # retry a provider stream that broke mid-response (502, missing message_stop)
+  mcp_timeout_ms: 240000
+  policy_proxy: true            # apply the agent sampling and reasoning effort to every model call
+  output_guard: true            # truncate oversized live tool outputs (4 KiB per result, 24 KiB per turn)
+  stall_timeout: null           # seconds without OpenCode output (and an idle process tree) that end a trial as a timeout
+
+sandbox:
+  backend: docker               # local Docker daemon
+  cpu: 2
+  memory: 8Gi
+  docker:
+    bind_data: true             # bind-mount benchmark data read-only instead of uploading it
+  files: {}                     # remote_path: local_path uploaded into every sandbox
+  setup: []                     # shell commands run in every sandbox after creation
+
+run:
+  output_dir: outputs
+  concurrency: 4
+  retries: 3                    # infrastructure retries per trial; failed trials are excluded from scores
+  task_timeout: 3600            # agent wall-clock budget per trial (seconds)
+  trials: 1
+
+benchmarks:
+  online_mind2web:                     # 300 live-website tasks; runs that end on a site block (403, CAPTCHA, ...) are recorded as skipped
+    image: wildawm/wildawm-opencode-web@sha256:905c64f8e59f2e712ee21c1162854a6ada8c1985767d58b1bfaf40bac4c70536
+    chromium: null                     # host Chromium shared by Playwright MCP and browser-use; null uses `uv run playwright install chromium`
+    hf_token: ""                       # Hugging Face token for osunlp/Online-Mind2Web (HF_TOKEN also works)
+  webarena:                            # 226-task subset; sites run from the upstream WebArena docker setup (web-arena-x/webarena, environment_docker)
+    image: wildawm/wildawm-opencode-web@sha256:905c64f8e59f2e712ee21c1162854a6ada8c1985767d58b1bfaf40bac4c70536
+    chromium: null
+    urls:                              # site base URLs including any path prefix; start or reset all sites freshly before every full run
+      shopping: http://127.0.0.1:7770
+      shopping_admin: http://127.0.0.1:7780/admin
+      reddit: http://127.0.0.1:9999
+      gitlab: http://127.0.0.1:8023
+      map: http://127.0.0.1:3000
+      wikipedia: http://127.0.0.1:8888/wikipedia_en_all_maxi_2022-05/A/User:The_other_Kiwix_guy/Landing
+      homepage: http://127.0.0.1:4399
+    run: {concurrency: 1}              # tasks share one stateful environment
+  qwenclawbench:
+    image: wildawm/wildawm-openclaw@sha256:c2bbbe6c14c2defe20c86a147126faea047b6ce53b0d27fb78929ae23ee54f03
+    data_dir: third_party/QwenClawBench/data/qwenclawbench-v1.1-100   # tasks/ and assets/; relative to the repository root
+    scoring: penalized                 # penalized (judge part zeroed when automated checks < 0.75) | simple (weighted average)
+    grade_timeout: 3600                # host-side grading budget per trial (automated checks + LLM judge)
+    judge_retries: 10                  # judge request retries with exponential backoff (5 s doubling, capped at 300 s)
+  claweval:
+    image: wildawm/wildawm-claw-eval-agent@sha256:e0ad2ad7e93f01ca3959c3993e224559278b4d379ea18e6c252cc3f43a73b5ae
+    data_dir: data/claweval            # fixtures under data_dir/tasks/<id>/fixtures, filled by `awmeval prepare claweval`
+    hf_token: ""
+    searxng_url: null                  # optional SearXNG JSON endpoint for web search after DDGS (rewritten like model URLs)
+    agent: {max_output_tokens: 32768}
+    opencode: {max_turns: 256, completion_nudges: 3, output_guard: true}
+    run: {task_timeout: 3600}          # agent, fixture upload and env snapshot share this budget per trial
+  cua_gym:
+    image: wildawm/wildawm-cua-gym@sha256:69541fcc75616ca778116ccd4f0c7b60d15ed717994d67c485a1a4173e3aec90
+    data_dir: data/cua_gym             # filled by `awmeval prepare cua_gym`
+    hf_token: ""
+    setup_timeout: 180
+    reward_timeout: 900
+    opencode: {completion_nudges: 0, output_guard: false}
+  osworld_verified:
+    image: wildawm/wildawm-lite-osworld@sha256:f4c4188e1b9fe03a3ed95669cd21b5f691ffa6832a7b6c43cd777ad837855336
+    setup_timeout: 900                 # task setup inside the image (downloads task files from huggingface.co)
+    reward_timeout: 900
+    settle_seconds: 20                 # pause between the agent's end and the evaluator
+    opencode: {max_turns: 256, completion_nudges: 0, output_guard: false}
+    sandbox: {cpu: 2, memory: 8Gi}
+  osworld2:                            # OSWorld 2.0 release v2026.08.08, all 108 tasks; QEMU TCG guest inside each sandbox
+    image: wildawm/wildawm-osworld-v2-qemu@sha256:5ff3b8e12cecf4d2aafaef52b5301522884022dffc688a01fd2fe3bd358e7ac2  # guest disk (restored to /System.qcow2 at start) and the in-sandbox native source
+    tasks_dir: data/osworld2/tasks     # gated task classes + task_hashes.json, filled by `awmeval prepare osworld2`
+    assets_dir: data/osworld2/assets   # gated task assets (~4.3 GB), filled by `awmeval prepare osworld2`
+    hf_token: ""                       # token with access to xlangai/osworld_v2_tasks and xlangai/osworld_v2_assets_gated
+    website_host_suffix: site.hku.icu  # upstream team-hosted mocked websites for this release
+    guest_ram: 12G                     # QEMU guest memory
+    guest_cpus: 8                      # QEMU guest vCPUs
+    qemu_startup_timeout: 1800         # budget for the guest to boot and answer; TCG emulation is slow
+    startup_wait_seconds: 60           # pause after task setup before the agent starts
+    settle_seconds: 15                 # pause before the native evaluator runs
+    phase_setup_wait_seconds: 5        # pause after each later phase setup (multi-phase tasks)
+    record_video: true                 # start the native screen recorder; the artifact is best-effort, never scored
+    respect_task_tool_constraints: true  # per-task tool policy from explicit interface constraints in the instruction
+    max_actions: null                  # cap on desktop MCP actions per trial
+    default_volume_size: null          # guest root volume in GiB (default: full 50 GiB disk; some tasks need 64)
+    unavailable_tasks: ["057", "072", "081"]  # recorded as infrastructure errors without running
+    gitlab_url: null                   # external URL of the self-hosted course GitLab for tasks 026 and 041 (github.com/Task-Web/gitlab)
+    gitlab_sandbox_url: null           # URL sandboxes use to reach that GitLab, if different from gitlab_url
+    gitlab_token: ""                   # GitLab root private token
+    unctad_forward: null               # host:port relaying raw TLS to investmentpolicy.unctad.org:443 for task 011 when sandbox egress is challenged
+    environment: {}                    # extra environment variables for the native task process
+    sandbox: {cpu: 12, memory: 20Gi}
+    run: {task_timeout: 14400}
+    opencode: {max_turns: 512, completion_nudges: 0, mcp_timeout_ms: 1860000, output_guard: true}
+    vision: {retries: 3}               # attempts per image
+  ale:
+    image: wildawm/wildawm-ale@sha256:9cd7e250ced72603fe7e824955cc46e6f9451570992c06e1510920711e19247a
+    data_dir: data/ale                 # filled by `awmeval prepare ale` (gated HF dataset, 44 GB archive, 56 GB extracted)
+    hf_token: ""
+    task_resources: true               # per-task CPU/memory from the ALE task cards; false uses sandbox.cpu/memory
+    desktop_timeout: 600               # desktop and CUA server start; the first start of the 104 GB image reads it cold
+    collect_timeout: 1800
+    opencode: {max_turns: 512, completion_nudges: 0, mcp_timeout_ms: 1860000, output_guard: true, stall_timeout: 1800}
+    sandbox: {cpu: 4, memory: 32Gi}    # 104 GB image
+    run: {task_timeout: 14400}
+  wildawm:                             # WildAWM tasks in Harbor format (wildawm-harbor)
+    dataset_dir: data/wildawm-harbor   # task packages: one task-set folder or the dataset root (`awmeval prepare wildawm`)
+    hf_repo: ""                        # Hugging Face dataset id of wildawm-harbor
+    hf_token: ""
+    subset: val33                      # val33 | train | all | sft100 | rl208 | rl100 (any task.toml [metadata] set_<name> flag)
+    oracle: false                      # run solution/solve.sh instead of the agent (task check without a model)
+    agent_user: agent                  # unprivileged image user that runs the agent (null: the image user)
+    env: {}                            # values for task.toml ${VAR:-default} env templates; WILDAWM_VISION_* come from `vision`
+    opencode: {output_guard: false}
+    sandbox: {cpu: null, memory: null}     # null: each task's [environment] cpus / memory_mb
+    run: {trials: 8, task_timeout: null}   # 8 rollouts per task (pass@k, pass^k); null timeout: each task's [agent].timeout_sec

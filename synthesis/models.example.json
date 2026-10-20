@@ -1,0 +1,94 @@
+{
+  "_comment": "Copy this file to models.json, which is gitignored. Each provider is an example local OpenAI-compatible server (for example vLLM); replace base_url, api_key, model_id, and context_window with your own deployment. List in quirks.reasoning_effort.values only the efforts your server accepts (vLLM and SGLang accept low, medium and high).",
+  "default": "glm/GLM-5.2",
+  "providers": {
+    "glm": {
+      "provider_type": "openai_generic",
+      "base_url": "http://127.0.0.1:8000/v1",
+      "api_key": "EMPTY",
+      "models": {
+        "GLM-5.2": {
+          "model_id": "zai-org/GLM-5.2",
+          "quirks": {
+            "reasoning_effort": {
+              "values": ["none", "low", "medium", "high"],
+              "default": "high",
+              "chat_param": "reasoning_effort",
+              "responses_param": "reasoning",
+              "fail_if_stripped": true
+            }
+          },
+          "info": {
+            "context_window": 300000
+          }
+        }
+      }
+    },
+    "qwen": {
+      "provider_type": "openai_generic",
+      "base_url": "http://127.0.0.1:8001/v1",
+      "api_key": "EMPTY",
+      "models": {
+        "Qwen3.6-35B-A3B": {
+          "model_id": "Qwen/Qwen3.6-35B-A3B",
+          "quirks": {
+            "reasoning_effort": {
+              "values": ["none", "low", "medium", "high"],
+              "default": "high",
+              "chat_param": "reasoning_effort",
+              "responses_param": "reasoning",
+              "fail_if_stripped": true
+            }
+          },
+          "info": {
+            "context_window": 65536
+          }
+        }
+      }
+    },
+    "deepseek": {
+      "provider_type": "openai_generic",
+      "base_url": "http://127.0.0.1:8002/v1",
+      "api_key": "EMPTY",
+      "models": {
+        "DeepSeek-V4-Flash": {
+          "model_id": "deepseek-ai/DeepSeek-V4-Flash",
+          "quirks": {
+            "reasoning_effort": {
+              "values": ["none", "low", "medium", "high"],
+              "default": "high",
+              "chat_param": "reasoning_effort",
+              "responses_param": "reasoning",
+              "fail_if_stripped": true
+            }
+          },
+          "info": {
+            "context_window": 131072
+          }
+        }
+      }
+    },
+    "minimax": {
+      "provider_type": "openai_generic",
+      "base_url": "http://127.0.0.1:8003/v1",
+      "api_key": "EMPTY",
+      "models": {
+        "MiniMax-M3": {
+          "model_id": "MiniMaxAI/MiniMax-M3",
+          "quirks": {
+            "reasoning_effort": {
+              "values": ["none", "low", "medium", "high"],
+              "default": "high",
+              "chat_param": "reasoning_effort",
+              "responses_param": "reasoning",
+              "fail_if_stripped": true
+            }
+          },
+          "info": {
+            "context_window": 131072
+          }
+        }
+      }
+    }
+  }
+}

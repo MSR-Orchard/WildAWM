@@ -1,0 +1,33 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# libfaketime: the gateway must see the same frozen world time as the agent.
+RUN apt-get update && apt-get install -y --no-install-recommends libfaketime \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY pyproject.toml /app/
+RUN pip install --no-cache-dir \
+    "fastapi>=0.135.2" \
+    "fastapi-mcp==0.4.0" \
+    "mcp==1.26.0" \
+    "simpleargparser>=0.2.4" \
+    "sqlalchemy>=2.0.48" \
+    "uvicorn>=0.42.0" \
+    "json_repair" \
+    "bcrypt"
+
+# System-wide preload so even subprocesses see the frozen time.
+RUN echo "/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1" > /etc/ld.so.preload
+
+COPY wildawm/ /app/wildawm/
+
+RUN mkdir -p /data
+
+EXPOSE 8080
+
+ENTRYPOINT ["python", "-m", "wildawm.cli.gateway"]
+CMD ["--world_dir", "/data", "--host", "0.0.0.0", "--port", "8080"]

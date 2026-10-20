@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% from '_place_card.html' import place_card %}
+{% block title %}{{ place.name }} - Google Maps{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    {% include '_rail.html' %}
+
+    <aside class="left-panel">
+        {% set search_value = place.name %}
+        {% include '_search_bar.html' %}
+
+        <div class="pd-hero">
+            <a href="{{ url_for('category_page', slug=place.category.slug) }}" class="pd-back" title="Back">
+                <span class="material-icons-outlined">arrow_back</span>
+            </a>
+            <img src="{{ place.hero_image }}" alt="{{ place.name }}"
+                 onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #e8f0fe, #fde7f3)';">
+        </div>
+
+        <div class="pd-header">
+            <h1>{{ place.name }}</h1>
+            <div class="pd-meta">
+                <span class="rating">{{ "%.1f"|format(place.rating) }}</span>
+                <span class="stars" style="color:#fbbc04;">
+                    {% for i in range(place.stars_full) %}<span class="material-icons" style="font-size:16px;">star</span>{% endfor %}
+                    {% if place.stars_half %}<span class="material-icons" style="font-size:16px;">star_half</span>{% endif %}
+                    {% for i in range(place.stars_empty) %}<span class="material-icons" style="font-size:16px;">star_outline</span>{% endfor %}
+                </span>
+                <span>({{ "{:,}".format(place.review_count) }})</span>
+                <span>•</span>
+                <span>{{ place.price_level }}</span>
+            </div>
+            <div class="pd-meta">
+                <span class="category">{{ place.category.name[:-1] if place.category.name.endswith('s') else place.category.name }}</span>
+                <span>•</span>
+                <span><a href="{{ url_for('city_page', slug=place.city.slug) }}">{{ place.city.display_name }}</a></span>
+            </div>
+            <div class="pd-sub" style="margin-top:8px;">{{ place.subtitle }}</div>
+        </div>
+
+        <div class="pd-actions">
+            <a href="{{ url_for('directions', to=place.name) }}" class="pd-action primary">
+                <div class="ico"><span class="material-icons-outlined">directions</span></div>
+                <span class="lbl">Directions</span>
+            </a>
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('save_place_form', place_id=place.id) }}" style="display:contents;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if user_lists %}
+                <input type="hidden" name="list_id" value="{{ user_lists[0].id }}">
+                {% endif %}
+                <button type="submit" class="pd-action {% if is_saved %}saved{% endif %}">
+                    <div class="ico"><span class="material-icons-outlined">{% if is_saved %}bookmark{% else %}bookmark_border{% endif %}</span></div>
+                    <span class="lbl">{% if is_saved %}Saved{% else %}Save{% endif %}</span>
+                </button>
+            </form>
+            {% else %}
+            <button onclick="toggleSave({{ place.id }}, this)" class="pd-action {% if is_saved %}saved{% endif %}" type="button">
+                <div class="ico"><span class="material-icons-outlined">{% if is_saved %}bookmark{% else %}bookmark_border{% endif %}</span></div>
+                <span class="lbl">{% if is_saved %}Saved{% else %}Save{% endif %}</span>
+            </button>
+            {% endif %}
+            <a href="#nearby" class="pd-action">
+                <div class="ico"><span class="material-icons-outlined">near_me</span></div>
+                <span class="lbl">Nearby</span>
+            </a>
+            <button class="pd-action" type="button" onclick="var m=document.getElementById('share-modal'); if(m){m.scrollIntoView({behavior:'smooth',block:'center'}); var i=document.getElementById('share-url-input'); if(i){i.focus(); i.select();}}">
+                <div class="ico"><span class="material-icons-outlined">share</span></div>
+                <span class="lbl">Share</span>
+            </button>
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('place_checkin', slug=place.slug) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="pd-action" type="submit">
+                    <div class="ico"><span class="material-icons-outlined">location_on</span></div>
+                    <span class="lbl">Check in</span>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="share-url" id="share-modal" style="margin:8px 16px 12px; padding:12px 14px; background:#f1f3f4; border:1px solid #dadce0; border-radius:8px; font-size:13px; color:#202124;">
+            <div style="margin-bottom:6px;"><strong style="font-size:13px;">Share this place</strong></div>
+            <div style="color:#5f6368; margin-bottom:6px;">Anyone with this link can view {{ place.name }}:</div>
+            <input id="share-url-input" class="share-url-input" type="text" readonly
+                   value="http://localhost:40008{{ url_for('place_detail', slug=place.slug) }}"
+                   style="width:100%; padding:8px 10px; border:1px solid #dadce0; border-radius:6px; font-family:monospace; font-size:13px; background:#ffffff;">
+            <div class="share-url-text" style="margin-top:6px; font-family:monospace; font-size:12px; color:#1a73e8; word-break:break-all;">http://localhost:40008{{ url_for('place_detail', slug=place.slug) }}</div>
+        </div>
+
+        <div class="pd-block">
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">place</span></div>
+                <div class="row-content">{{ place.address }}</div>
+            </div>
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">schedule</span></div>
+                <div class="row-content">
+                    {% set _place_hours = place.hours|default('', true) %}
+                    {% if '24' in _place_hours %}
+                        <span style="color:#34a853; font-weight:500;">Open 24 hours</span>
+                    {% elif 'Closed' in _place_hours %}
+                        {{ _place_hours }}
+                    {% elif _place_hours %}
+                        <span style="color:#34a853; font-weight:500;">Open now</span> · {{ _place_hours }}
+                    {% else %}
+                        Hours unavailable
+                    {% endif %}
+                </div>
+            </div>
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">phone</span></div>
+                <div class="row-content">{{ place.phone }}</div>
+            </div>
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">language</span></div>
+                <div class="row-content"><a href="{{ place.website }}" target="_blank" rel="noopener">{{ place.website|replace('https://', '') }}</a></div>
+            </div>
+            {% if place.parking_info %}
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">local_parking</span></div>
+                <div class="row-content">{{ place.parking_info }}</div>
+            </div>
+            {% elif place.has_parking_lot %}
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">local_parking</span></div>
+                <div class="row-content">Parking lot available</div>
+            </div>
+            {% endif %}
+            {% if place.delivery_available %}
+            <div class="pd-row">
+                <div class="row-icon"><span class="material-icons-outlined">delivery_dining</span></div>
+                <div class="row-content">Delivery available</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="pd-block">
+            <div class="pd-section-title">About</div>
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">{{ place.description }}</p>
+        </div>
+
+        {% set ams = place.get_amenities() %}
+        {% set access_terms = ['wheelchair','accessible','accessibility','braille','sign language','service animal','hearing loop','assisted listening','ramp','elevator'] %}
+        {% set amenity_items = [] %}
+        {% set accessibility_items = [] %}
+        {% for a in ams %}
+            {% set ns = namespace(is_access=false) %}
+            {% set al = a|lower %}
+            {% for term in access_terms %}
+                {% if term in al %}{% set ns.is_access = true %}{% endif %}
+            {% endfor %}
+            {% if ns.is_access %}
+                {% set _ = accessibility_items.append(a) %}
+            {% else %}
+                {% set _ = amenity_items.append(a) %}
+            {% endif %}
+        {% endfor %}
+        {% set joined_amenities = amenity_items|join(' ')|lower %}
+        {% if place.has_parking_lot and 'parking lot' not in joined_amenities and 'parking' not in joined_amenities %}{% set _ = amenity_items.append('Parking lot') %}{% endif %}
+        {% if place.delivery_available and 'delivery' not in joined_amenities %}{% set _ = amenity_items.append('Delivery') %}{% endif %}
+        {% if place.ev_charging and 'ev charging' not in joined_amenities %}{% set _ = amenity_items.append('EV charging') %}{% endif %}
+        {% if place.motorcycle_parking and 'motorcycle' not in joined_amenities %}{% set _ = amenity_items.append('Motorcycle parking') %}{% endif %}
+        {% if place.bicycle_parking and 'bicycle' not in joined_amenities %}{% set _ = amenity_items.append('Bicycle parking') %}{% endif %}
+
+        {% if amenity_items %}
+        <div class="pd-block" id="amenities">
+            <h3 class="pd-section-title" style="font-size:16px;">Amenities</h3>
+            <ul class="pd-amenities-list" style="list-style:none; padding:0; margin:0;">
+                {% for a in amenity_items %}
+                <li class="pd-amenity-row" style="display:flex; align-items:center; gap:10px; padding:6px 0; font-size:14px;">
+                    <span class="material-icons-outlined" style="font-size:18px; color:#34a853;">check_circle</span>
+                    <span>{{ a }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if accessibility_items %}
+        <div class="pd-block" id="accessibility">
+            <h3 class="pd-section-title" style="font-size:16px;">Accessibility</h3>
+            <ul class="pd-accessibility-list" style="list-style:none; padding:0; margin:0;">
+                {% for a in accessibility_items %}
+                <li class="pd-accessibility-row" style="display:flex; align-items:center; gap:10px; padding:6px 0; font-size:14px;">
+                    <span class="material-icons-outlined" style="font-size:18px; color:#1a73e8;">accessible</span>
+                    <span>{{ a }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% set gallery = place.get_gallery() %}
+        {% if gallery %}
+            {% for sec in gallery %}
+            <section class="pd-gallery-section">
+                <h3>{{ sec.title }}</h3>
+                <p>{{ sec.desc }}</p>
+                <div class="pd-gallery-images">
+                    {% for img in sec.images %}
+                    <div class="pd-gallery-img">
+                        <img src="{{ img }}" alt="{{ sec.title }}"
+                             onerror="this.parentElement.style.display='none';">
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        {% endif %}
+
+        {% set snippets = place.get_review_snippets() %}
+        {% set total_reviews_count = reviews|length + snippets|length %}
+        <div class="pd-block reviews-section">
+            <div class="pd-section-title">
+                <span>Reviews ({{ total_reviews_count }})</span>
+                {% if current_user.is_authenticated %}
+                <a href="#write-review" class="btn ghost btn-sm">Write a review</a>
+                {% endif %}
+            </div>
+            {# Render all seeded review snippets in their natural order, all ratings mixed. #}
+            {% if snippets %}
+                {% for s in snippets %}
+                <div class="review snippet-review" data-rating="{{ s.rating|int }}">
+                    <div class="review-head">
+                        <div class="r-avatar">{{ (s.author[0]|upper) if s.author else 'G' }}</div>
+                        <div>
+                            <div class="r-name">{{ s.author if s.author else 'Google user' }}</div>
+                            <div class="r-date">Verified review</div>
+                        </div>
+                    </div>
+                    <div class="review-stars">
+                        {% for i in range(s.rating|int) %}<span class="material-icons" style="font-size:16px; color:#fbbc04;">star</span>{% endfor %}
+                        {% for i in range(5 - (s.rating|int)) %}<span class="material-icons" style="font-size:16px;">star_outline</span>{% endfor %}
+                    </div>
+                    <div class="review-body">{{ s.text }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% for r in reviews %}
+            <div class="review">
+                <div class="review-head">
+                    <div class="r-avatar">{{ r.user.avatar_letter }}</div>
+                    <div>
+                        <div class="r-name">{{ r.user.name }}</div>
+                        <div class="r-date">{{ r.created_at.strftime('%b %d, %Y') }}</div>
+                    </div>
+                </div>
+                <div class="review-stars">
+                    {% for i in range(r.rating) %}<span class="material-icons" style="font-size:16px;">star</span>{% endfor %}
+                    {% for i in range(5 - r.rating) %}<span class="material-icons" style="font-size:16px;">star_outline</span>{% endfor %}
+                </div>
+                {% if r.title %}<div class="review-title">{{ r.title }}</div>{% endif %}
+                <div class="review-body">{{ r.body }}</div>
+                {% if current_user.is_authenticated and r.user_id == current_user.id %}
+                <form method="POST" action="{{ url_for('delete_review', review_id=r.id) }}" style="margin-top:6px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn ghost btn-sm" type="submit">Delete</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if not reviews and not snippets %}
+            <div style="padding:16px 0; color: var(--text-secondary); font-size: 13px;">
+                Be the first to leave a review.
+            </div>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <form id="write-review" method="POST" action="{{ url_for('submit_review', slug=place.slug) }}" class="review-form" style="margin-top:20px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="star-picker">
+                    {% for i in [5,4,3,2,1] %}
+                    <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if i == 5 %}checked{% endif %}>
+                    <label for="star{{ i }}">★</label>
+                    {% endfor %}
+                </div>
+                <input type="text" name="title" placeholder="Review title (optional)">
+                <textarea name="body" rows="4" placeholder="Share your experience at {{ place.name }}..." required></textarea>
+                <button type="submit" class="btn">Post review</button>
+            </form>
+            {% else %}
+            <div style="padding:16px; background: var(--blue-light); border-radius: 8px; margin-top:12px; text-align:center;">
+                <a href="{{ url_for('login') }}">Sign in</a> to write a review.
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="pd-block" id="nearby">
+            <div class="pd-section-title">{% if nearby_cat %}{{ nearby_cat|capitalize }} nearby{% else %}Nearby places{% endif %}</div>
+            {% if nearby_cat_chips %}
+            <div class="nearby-chips">
+                <a href="{{ url_for('place_detail', slug=place.slug) }}#nearby"
+                   class="nearby-chip {% if not nearby_cat %}active{% endif %}">All</a>
+                {% for cat, cnt in nearby_cat_chips %}
+                    <a href="{{ url_for('place_detail', slug=place.slug, nearby_category=cat.slug) }}#nearby"
+                       class="nearby-chip {% if nearby_cat == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="sub" style="font-size:12px; color:var(--text-secondary); padding:4px 0 8px;">
+                {% if nearby %}{{ nearby|length }} place{{ '' if nearby|length == 1 else 's' }} within 30 mi{% else %}No matching places nearby{% endif %}
+            </div>
+        </div>
+        {% for p in nearby %}
+            {{ place_card(p) }}
+        {% endfor %}
+    </aside>
+
+    {% include '_mapcanvas.html' %}
+</div>
+{% endblock %}

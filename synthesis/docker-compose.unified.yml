@@ -1,0 +1,231 @@
+# Per-world stack: shared environment (MCP gateway [+ WebHarbor]) plus profile-gated agents.
+
+x-agent-base: &agent-base
+  build:
+    context: .
+    dockerfile: docker/Dockerfile.agent
+  # Override with AWM_AGENT_IMAGE to test another build.
+  image: ${AWM_AGENT_IMAGE:-wildawm-agent:latest}
+  cpus: ${AWM_AGENT_CPUS:-2.0}
+  mem_limit: ${AWM_AGENT_MEM_LIMIT:-6g}
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - ${AWM_INSTANCES_DIR:-./worlds/instances}/${AWM_WORLD_ID:-default}/workspace:/workspace
+    - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/faketimerc:/etc/faketimerc:ro
+    - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/caddy-ca:/webharbor-ca:ro
+    - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/agent-config:/agent-config:ro
+    - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/agent-data:/home/agent/.local/share
+  networks:
+    - wildawm
+  restart: unless-stopped
+
+x-agent-env: &agent-env
+  HOME: /home/agent
+  AWM_HOST_UID: ${AWM_HOST_UID:-1000}
+  AWM_HOST_GID: ${AWM_HOST_GID:-1000}
+  AWM_WORLD_ID: ${AWM_WORLD_ID:-default}
+  AWM_MCP_INTERNAL_PORT: ${AWM_MCP_INTERNAL_PORT:-8080}
+  AWM_MCP_BASE_URL: ${AWM_MCP_BASE_URL:-http://mcp:8080}
+  AWM_BROWSER_MCP_PORT: ${AWM_BROWSER_MCP_PORT:-8931}
+  AWM_BROWSER_MCP_URL: ${AWM_BROWSER_MCP_URL:-http://127.0.0.1:8931/mcp}
+  AWM_LLM_PROXY_PORT: ${AWM_LLM_PROXY_PORT:-3456}
+  AWM_LLM_PROXY_BASE_URL: ${AWM_LLM_PROXY_BASE_URL:-http://127.0.0.1:3456}
+  AWM_OPENAI_API_KEY: ${AWM_OPENAI_API_KEY:-}
+  AWM_OPENAI_BASE_URL: ${AWM_OPENAI_BASE_URL:-}
+  AWM_OPENAI_MODEL: ${AWM_OPENAI_MODEL:-}
+  AWM_CHAT_TOKEN_LIMIT_PARAM: ${AWM_CHAT_TOKEN_LIMIT_PARAM:-}
+  AWM_MODEL_TEXT_ONLY: ${AWM_MODEL_TEXT_ONLY:-0}
+  AWM_MODEL_CONTEXT_WINDOW: ${AWM_MODEL_CONTEXT_WINDOW:-}
+  AWM_AGENT_TURN_TIMEOUT: ${AWM_AGENT_TURN_TIMEOUT:-1800}
+  AWM_LLM_PROXY_UPSTREAM_TIMEOUT: ${AWM_LLM_PROXY_UPSTREAM_TIMEOUT:-1800}
+  AWM_OPENCLAW_PROVIDER_TIMEOUT: ${AWM_OPENCLAW_PROVIDER_TIMEOUT:-1560}
+  OPENAI_API_KEY: ${AWM_OPENAI_API_KEY:-}
+  OPENAI_BASE_URL: ${AWM_OPENAI_BASE_URL:-}
+  OPENAI_MODEL: ${AWM_OPENAI_MODEL:-}
+  AWM_REASONING_EFFORT: ${AWM_REASONING_EFFORT:-}
+  AWM_REASONING_CHAT_PARAM: ${AWM_REASONING_CHAT_PARAM:-reasoning_effort}
+  AWM_REASONING_RESPONSES_PARAM: ${AWM_REASONING_RESPONSES_PARAM:-reasoning}
+  AWM_REASONING_FAIL_IF_STRIPPED: ${AWM_REASONING_FAIL_IF_STRIPPED:-1}
+  AWM_VISION_BASE_URL: ${AWM_VISION_BASE_URL:-}
+  AWM_VISION_API_KEY: ${AWM_VISION_API_KEY:-}
+  AWM_VISION_MODEL: ${AWM_VISION_MODEL:-}
+  AWM_VISION_FALLBACK_BASE_URL: ${AWM_VISION_FALLBACK_BASE_URL:-}
+  AWM_VISION_FALLBACK_API_KEY: ${AWM_VISION_FALLBACK_API_KEY:-}
+  AWM_VISION_FALLBACK_MODEL: ${AWM_VISION_FALLBACK_MODEL:-}
+  AWM_VISION_REASONING_EFFORT: ${AWM_VISION_REASONING_EFFORT:-none}
+  AWM_VISION_REASONING_CHAT_PARAM: ${AWM_VISION_REASONING_CHAT_PARAM:-reasoning_effort}
+  AWM_VISION_REASONING_RESPONSES_PARAM: ${AWM_VISION_REASONING_RESPONSES_PARAM:-reasoning}
+  ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+  ANTHROPIC_DEFAULT_HAIKU_MODEL: ${ANTHROPIC_DEFAULT_HAIKU_MODEL:-}
+  ANTHROPIC_DEFAULT_SONNET_MODEL: ${ANTHROPIC_DEFAULT_SONNET_MODEL:-}
+  ANTHROPIC_DEFAULT_OPUS_MODEL: ${ANTHROPIC_DEFAULT_OPUS_MODEL:-}
+  ANTHROPIC_SMALL_FAST_MODEL: ${ANTHROPIC_SMALL_FAST_MODEL:-}
+  CLAUDE_CODE_SUBAGENT_MODEL: ${CLAUDE_CODE_SUBAGENT_MODEL:-}
+  CLAUDE_CODE_AUTO_COMPACT_WINDOW: ${CLAUDE_CODE_AUTO_COMPACT_WINDOW:-}
+  CLAUDE_CODE_ATTRIBUTION_HEADER: ${CLAUDE_CODE_ATTRIBUTION_HEADER:-0}
+  CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS: ${CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS:-1}
+  CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: ${CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC:-1}
+  DISABLE_INTERLEAVED_THINKING: ${DISABLE_INTERLEAVED_THINKING:-1}
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  CODEX_HOME: /home/agent/.codex
+  XDG_CONFIG_HOME: /home/agent/.config
+  XDG_DATA_HOME: /home/agent/.local/share
+  # openclaw only: adds /workspace to its image tool's media-path allowlist.
+  OPENCLAW_WORKSPACE_DIR: /workspace
+
+services:
+  mcp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
+    image: ${MCP_IMAGE:-wildawm-mcp:latest}
+    container_name: wildawm-mcp-${AWM_WORLD_ID:-default}
+    cpus: ${AWM_MCP_CPUS:-1.0}
+    mem_limit: ${AWM_MCP_MEM_LIMIT:-2g}
+    volumes:
+      - ${AWM_INSTANCES_DIR:-./worlds/instances}/${AWM_WORLD_ID:-default}/data:/data
+      - ${AWM_INSTANCES_DIR:-./worlds/instances}/${AWM_WORLD_ID:-default}/overlay:/overlay:ro
+      - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/faketimerc:/etc/faketimerc:ro
+    environment:
+      - AWM_WORLD_DIR=/data
+      - AWM_MCP_INTERNAL_PORT=${AWM_MCP_INTERNAL_PORT:-8080}
+    command:
+      - "--world_dir"
+      - "/data"
+      - "--extra_apps_dir"
+      - "/overlay/apps"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "${AWM_MCP_INTERNAL_PORT:-8080}"
+    ports:
+      - "${AWM_MCP_PORT:-8080}:${AWM_MCP_INTERNAL_PORT:-8080}"
+    networks:
+      - wildawm
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:${AWM_MCP_INTERNAL_PORT:-8080}/health', timeout=${AWM_HTTP_PROBE_TIMEOUT:-5})\""]
+      interval: 5s
+      timeout: ${AWM_HTTP_PROBE_TIMEOUT:-5}s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  webharbor:
+    profiles: ["webharbor"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.webharbor
+    image: ${WEBHARBOR_IMAGE:-wildawm-webharbor:latest}
+    container_name: wildawm-webharbor-${AWM_WORLD_ID:-default}
+    cpus: ${AWM_WEBHARBOR_CPUS:-2.0}
+    mem_limit: ${AWM_WEBHARBOR_MEM_LIMIT:-4g}
+    volumes:
+      - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/caddy-ca:/var/lib/caddy/pki/authorities/local
+    networks:
+      wildawm:
+        aliases:
+          - www.allrecipes.com
+          - www.amazon.com
+          - www.apple.com
+          - arxiv.org
+          - www.bbc.com
+          - www.booking.com
+          - github.com
+          - flights.google.com
+          - maps.google.com
+          - www.google.com
+          - huggingface.co
+          - www.wolframalpha.com
+          - dictionary.cambridge.org
+          - www.coursera.org
+          - www.espn.com
+    ports:
+      - "${AWM_WEBHARBOR_CTRL_HOST_PORT:-8101}:${AWM_WEBHARBOR_CTRL_PORT:-8101}"
+    restart: unless-stopped
+
+  # The world's only host-exposed control port (token-gated); brokers HTTP to the agent adapters.
+  worldctl:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worldctl
+    # Override with AWM_WORLDCTL_IMAGE to test another build.
+    image: ${AWM_WORLDCTL_IMAGE:-wildawm-worldctl:latest}
+    container_name: wildawm-worldctl-${AWM_WORLD_ID:-default}
+    cpus: ${AWM_WORLDCTL_CPUS:-1.0}
+    mem_limit: ${AWM_WORLDCTL_MEM_LIMIT:-1g}
+    environment:
+      - AWM_WORLD_ID=${AWM_WORLD_ID:-default}
+      - AWM_WORLDCTL_TOKEN=${AWM_WORLDCTL_TOKEN:-}
+      - AWM_AGENT_ADAPTER_PORT=${AWM_AGENT_ADAPTER_PORT:-8999}
+      - AWM_WORLDCTL_PORT=${AWM_WORLDCTL_PORT:-8300}
+      - AWM_WEBHARBOR_HOST=webharbor
+      - AWM_WEBHARBOR_CTRL_INTERNAL_PORT=${AWM_WEBHARBOR_CTRL_PORT:-8101}
+      - AWM_WORLDCTL_LOG_DIR=/var/log/worldctl
+    volumes:
+      - ${AWM_NANOBOT_STATE_DIR:-./runtime/nanobot}/${AWM_WORLD_ID:-default}/logs:/var/log/worldctl
+    ports:
+      - "${AWM_WORLDCTL_PORT_HOST:-8300}:${AWM_WORLDCTL_PORT:-8300}"
+    networks:
+      - wildawm
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS --max-time ${AWM_HTTP_PROBE_TIMEOUT:-5} http://localhost:${AWM_WORLDCTL_PORT:-8300}/health"]
+      interval: 5s
+      timeout: ${AWM_HTTP_PROBE_TIMEOUT:-5}s
+      retries: 3
+      start_period: 3s
+    restart: unless-stopped
+
+  # Agents publish no host ports; worldctl reaches each adapter over the private network.
+  agent-nanobot:
+    <<: *agent-base
+    profiles: ["nanobot"]
+    container_name: wildawm-agent-nanobot-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: nanobot
+
+  agent-opencode:
+    <<: *agent-base
+    profiles: ["opencode"]
+    container_name: wildawm-agent-opencode-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: opencode
+
+  # CLI-only harnesses: the in-container adapter runs the CLI as a subprocess.
+  agent-claude-code:
+    <<: *agent-base
+    profiles: ["claude-code"]
+    container_name: wildawm-agent-claude-code-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: claude-code
+
+  agent-codex:
+    <<: *agent-base
+    profiles: ["codex"]
+    container_name: wildawm-agent-codex-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: codex
+
+  agent-hermes:
+    <<: *agent-base
+    profiles: ["hermes"]
+    container_name: wildawm-agent-hermes-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: hermes
+
+  agent-openclaw:
+    <<: *agent-base
+    profiles: ["openclaw"]
+    container_name: wildawm-agent-openclaw-${AWM_WORLD_ID:-default}
+    environment:
+      <<: *agent-env
+      AWM_AGENT_KIND: openclaw
+
+networks:
+  wildawm:
+    driver: bridge

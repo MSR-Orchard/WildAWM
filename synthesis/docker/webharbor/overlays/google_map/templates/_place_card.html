@@ -1,0 +1,41 @@
+{# Small reusable place card used inside the left panel #}
+{% macro place_card(p) %}
+<a href="{{ url_for('place_detail', slug=p.slug) }}" class="place-card">
+    <div class="info">
+        <div class="name">{{ p.name }}</div>
+        <div class="rating-row">
+            <span class="num">{{ "%.1f"|format(p.rating) }}</span>
+            <span class="stars">
+                {% for i in range(p.stars_full) %}<span class="material-icons" style="font-size:14px;">star</span>{% endfor %}
+                {% if p.stars_half %}<span class="material-icons" style="font-size:14px;">star_half</span>{% endif %}
+                {% for i in range(p.stars_empty) %}<span class="material-icons" style="font-size:14px;">star_outline</span>{% endfor %}
+            </span>
+            <span>({{ "{:,}".format(p.review_count) }})</span>
+            <span>•</span>
+            <span>{{ p.price_level }}</span>
+            <span>•</span>
+            <span>{{ p.category.name[:-1] if p.category.name.endswith('s') else p.category.name }}</span>
+        </div>
+        <div class="meta">
+            {{ p.address }}{% set _d = p.distance_mi|default(none, true) %}{% if _d is not none %} · <span class="distance">{{ "%.1f"|format(_d) }} mi</span>{% endif %}
+        </div>
+        {% set _hours = p.hours|default('', true) %}
+        <div class="hours">
+            {% if 'Closed' in _hours %}
+                <span class="closed">Closed</span> • {{ _hours[:40] }}
+            {% elif '24' in _hours %}
+                <span class="open">Open 24 hours</span>
+            {% elif _hours %}
+                <span class="open">Open</span> • {{ _hours[:40] }}
+            {% else %}
+                <span>Hours unavailable</span>
+            {% endif %}
+        </div>
+        <div class="desc">{{ p.description[:140] }}</div>
+    </div>
+    <div class="thumb">
+        <img src="{{ p.hero_image }}" alt="{{ p.name }}"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;background:#eceff1;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:12px;&quot;>{{ p.name[:12] }}</div>'">
+    </div>
+</a>
+{% endmacro %}

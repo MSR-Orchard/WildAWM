@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/rdi-berkeley/agents-last-exam.git",
+  "revision": "0b6465b13c85b5a0a017d4c88bcf979a519a5e1f",
+  "branch": "main",
+  "license": "Apache-2.0 (LICENSE); task data terms in LICENSE-DATA",
+  "contents": "ale_run/ framework and the 99 Linux tasks of selected_tasks/docker_support.txt with the shared tasks/ modules they import. Other agents, the vm MCP bridge, image build contexts, configs, docs, tests, scripts, assets, secrets and the uv lock are not vendored; the runtime image carries the resolved Python environment.",
+  "local_changes": [
+    "ale_run/agents/opencode/: OpenCode agent driving the awmeval harness assets (agent_runner.py with its policy proxy, vision_mcp.py, output_guard.mjs) uploaded to /tmp/awmeval; OpenCode config and runner settings come from the awmeval host",
+    "ale_run/agents/_assets/cua_mcp_server/src/index.js: desktop screenshots can be saved to a directory and returned as a path instead of inline images",
+    "ale_run/environments/task_data/co_located.py and providers/static.py: static provider sharing the sandbox filesystem with private task data under a root-only directory",
+    "ale_run/environments/output_pull.py: local output copy for co-located sandboxes",
+    "ale_run/executors/sandbox.py, base_interface/sandbox.py: bounded origin-log gathering (no symlinks, files up to 64 MiB, state/ skipped)",
+    "ale_run/orchestration/: opencode registered as the only agent, cancellation-safe lifecycle with fsync of result files, key redaction in run.json",
+    "ale_run/tasks/driver.py: idempotent detached evaluator launch",
+    "ale_run/tasks/metadata.py: exporter of per-task resources and task-data paths",
+    "ale_run/cli.py: resume only after a successful numeric evaluation",
+    "tasks/: evaluator fixes for pe_screening_memo_1 (configurable LLM judge), sse_northbound_programmatic_trading_01, mpc_control_building_v1, sumo_urban_am_peak_calibration, nsclc_radiomics_cox_signature_v1, simglucose_safe_basal_control_instance_1, WGS_Variant_Calling, glm_lake_calibration, mose2_bse_absorption_soc, silicon_bse_absorption"
+  ]
+}

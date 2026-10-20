@@ -1,0 +1,138 @@
+# Agent image with every harness; the entrypoint starts the one named by AWM_AGENT_KIND.
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        bash git curl wget jq ripgrep vim-tiny less \
+        ca-certificates gnupg \
+        libfaketime iptables gosu \
+        python3 python3-pip python3-venv \
+        unzip xz-utils \
+        sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN echo "/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1" > /etc/ld.so.preload
+
+# Frozen time breaks TLS validation; sitecustomize disables verification for Python.
+COPY docker/sitecustomize.py /usr/lib/python3.12/sitecustomize.py
+# COPY keeps restrictive source modes; the unprivileged agent user must read it.
+RUN chmod a+r /usr/lib/python3.12/sitecustomize.py
+
+# Cached Google IP ranges so the entrypoint need not fetch them at startup.
+COPY docker/offline-resources/goog.json /var/cache/wildawm/goog.json
+
+# Pinned: patch_nanobot.py matches exact source anchors.
+RUN pip install --break-system-packages \
+        "simpleargparser>=0.2.4" \
+        "nanobot-ai[api]==0.2.2"
+
+# Keep OPENCODE_VERSION in sync with Dockerfile.creator.
+ARG OPENCODE_VERSION=1.17.7
+RUN curl -fsSL https://opencode.ai/install | bash -s -- --version "${OPENCODE_VERSION}" \
+    && mv /root/.opencode/bin/opencode /usr/local/bin/opencode \
+    && chmod a+rx /usr/local/bin/opencode \
+    && rm -rf /root/.opencode
+
+# 2.1.154+ injects non-standard role messages that strict backends reject; no auto-update.
+ENV DISABLE_AUTOUPDATER=1
+RUN npm install -g @anthropic-ai/claude-code@2.1.153
+
+# Local LLM proxy every harness sends its model calls through.
+COPY docker/anthropic-to-openai-proxy.py /usr/local/bin/anthropic-to-openai-proxy.py
+# Must be readable, not just executable, by the unprivileged agent user.
+RUN chmod a+rx /usr/local/bin/anthropic-to-openai-proxy.py
+
+RUN npm install -g @openai/codex
+
+RUN pip install --break-system-packages uv
+
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+RUN pip install --break-system-packages "browser-use[cli]" playwright \
+    && playwright install chromium --with-deps \
+    && chmod -R a+rwX /opt/pw-browsers \
+    && browser-use install 2>/dev/null || true
+
+# Frozen clock makes the site certs look not-yet-valid to Chromium.
+RUN BUPROFILE=$(find /usr -path "*/browser_use/browser/profile.py" 2>/dev/null | head -1) \
+    && [ -n "$BUPROFILE" ] \
+    && sed -i 's/disable_security: bool = Field(default=False/disable_security: bool = Field(default=True/' "$BUPROFILE" \
+    || true
+
+RUN npm install -g @playwright/mcp
+
+# OpenClaw and Hermes come after the browser layers to keep the Chromium cache.
+RUN npm install -g openclaw@2026.6.1
+
+# ffmpeg: optional Hermes dependency, installed late to keep the early apt cache.
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Hermes in a uv venv; its Python lives outside /root so the agent user can run it.
+ENV AWM_HERMES_HOME_DIR=/opt/hermes-agent \
+    UV_PYTHON_INSTALL_DIR=/opt/uv-python
+RUN git clone --depth 1 https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
+    && cd /opt/hermes-agent \
+    && uv python install 3.11 \
+    && (uv sync --extra all || uv sync) \
+    && ln -sf /opt/hermes-agent/.venv/bin/hermes /usr/local/bin/hermes \
+    && chmod -R a+rX /opt/hermes-agent /opt/uv-python
+
+# PyPI is firewalled at runtime, so lazy installs would hang.
+ENV HERMES_DISABLE_LAZY_INSTALLS=1
+
+# Placeholder user (-o: uid 1000 may be taken); the runtime uid is AWM_HOST_UID.
+RUN useradd -m -u 1000 -o -s /bin/bash agent \
+    && mkdir -p /workspace \
+        /home/agent/.nanobot \
+        /home/agent/.config/opencode \
+        /home/agent/.codex \
+        /home/agent/.browser-use \
+        /home/agent/.local/share/opencode \
+        /home/agent/.openclaw \
+        /home/agent/.hermes \
+    && ln -sf /workspace/Notes      /home/agent/Notes \
+    && ln -sf /workspace/Documents  /home/agent/Documents \
+    && ln -sf /workspace/Downloads  /home/agent/Downloads \
+    && ln -sf /workspace/repos      /home/agent/repos \
+    && ln -sf /workspace/Desktop    /home/agent/Desktop \
+    && ln -sf /workspace/Pictures   /home/agent/Pictures \
+    && chmod -R 0777 /home/agent /workspace
+
+# Make nanobot persist each iteration so a timed-out turn keeps its trajectory.
+COPY docker/patch_nanobot.py /usr/local/bin/patch_nanobot.py
+RUN python3 /usr/local/bin/patch_nanobot.py /usr/local/lib/python3.12/dist-packages/nanobot
+
+# Bake tiktoken encodings; runtime egress is blocked and a download would stall.
+ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken-cache
+RUN mkdir -p /opt/tiktoken-cache \
+    && python3 -c "import tiktoken; tiktoken.get_encoding('cl100k_base'); tiktoken.get_encoding('o200k_base')" \
+    && chmod -R a+rX /opt/tiktoken-cache \
+    && ls /opt/tiktoken-cache
+
+# In-container adapter that worldctl talks to.
+RUN mkdir -p /usr/local/lib/python3.12/dist-packages/wildawm
+COPY wildawm/__init__.py /usr/local/lib/python3.12/dist-packages/wildawm/__init__.py
+COPY wildawm/json_utils.py /usr/local/lib/python3.12/dist-packages/wildawm/json_utils.py
+COPY wildawm/const_config.py /usr/local/lib/python3.12/dist-packages/wildawm/const_config.py
+COPY docker/agent_adapter.py /usr/local/bin/agent_adapter.py
+RUN chmod a+rx /usr/local/bin/agent_adapter.py \
+    && chmod -R a+rX /usr/local/lib/python3.12/dist-packages/wildawm
+COPY docker/agent-entrypoint.sh /usr/local/bin/agent-entrypoint.sh
+RUN chmod +x /usr/local/bin/agent-entrypoint.sh
+
+ENV HOME=/home/agent
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/agent-entrypoint.sh"]

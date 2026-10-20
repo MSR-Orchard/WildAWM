@@ -1,0 +1,37 @@
+[project]
+name = "awmeval"
+version = "0.1.0"
+description = "Out-of-distribution evaluation for Agent World Model in the Wild"
+requires-python = ">=3.12"
+dependencies = [
+    "huggingface-hub>=0.30",
+    "json-repair>=0.64.0",
+    "nltk>=3.10.3",
+    "playwright==1.61.0",
+    "openai>=1.0",
+    "pillow>=10.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "wildawm-common",
+]
+
+[project.optional-dependencies]
+orchard = [
+    "orchard-env @ git+https://github.com/microsoft/Orchard-Agentic.git@bd8da32b3a075128700caab75bbc491fb6fdc16e#subdirectory=orchard_env",
+]
+
+[project.scripts]
+awmeval = "awmeval.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["awmeval"]
+
+[tool.uv.sources]
+wildawm-common = { workspace = true }

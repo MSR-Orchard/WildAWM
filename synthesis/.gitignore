@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Secrets and machine-local configuration
+.env
+models.json
+
+# Generated synthesis and runtime state
+/data/
+/worlds/
+/tasks_xai/
+/outputs/
+/runtime/
+/logs/
+/webharbor_seeds/
+/workspace/
+
+# Local tools and editor state
+.claude/
+.vscode/

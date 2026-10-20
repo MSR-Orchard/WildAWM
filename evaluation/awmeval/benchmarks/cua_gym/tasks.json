@@ -1,0 +1,1732 @@
+{
+ "dataset": "xlangai/CUA-Gym",
+ "revision": "3c021d06e2b01bbb6ad28cfddec41d856e4a78c5",
+ "tasks": [
+  {
+   "id": "100245cd-117f-571e-bef5-27118df75392",
+   "apps": [
+    "salesforce_mock",
+    "linkedin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "1195e431-74d1-5cae-8bb7-0232aa49082f",
+   "apps": [
+    "google_sheets_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "13f87e9c-67d3-54ff-8111-f3004624bcce",
+   "apps": [
+    "reddit_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "144ce530-f875-5443-9371-005cfb9319b9",
+   "apps": [
+    "linkedin_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "14639f27-e363-5cf2-8b6f-187144828639",
+   "apps": [
+    "google_sheets_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "16b04758-9b2f-571e-b7f4-2f725603ba1f",
+   "apps": [
+    "gitlab_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "16b6090d-09f4-5de4-8b48-335051eb65db",
+   "apps": [
+    "reddit_mock",
+    "twitter_mock",
+    "linkedin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "1940e1ae-d53e-50f1-bd3b-2770dac3d356",
+   "apps": [
+    "google_drive_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "1de956e8-068c-5f5b-8a33-f43060f1312c",
+   "apps": [
+    "linkedin_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "23c9c788-bbee-58bd-a8c1-f27d3f1a6379",
+   "apps": [
+    "stripe_dashboard_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "253a6a32-e199-516c-8ae6-50004a8b6222",
+   "apps": [
+    "google_sheets_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "25b4355d-b6ab-5c52-8d70-352824af2414",
+   "apps": [
+    "twitter_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2655acbe-8186-5717-8bca-0cbfb1231bfc",
+   "apps": [
+    "shopify_admin_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2b049f2c-121a-59d8-ab21-8a60c5ace713",
+   "apps": [
+    "trello_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2dddb99d-93ae-587c-b97d-278d76065afb",
+   "apps": [
+    "reddit_mock",
+    "twitter_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2f1004e6-5a19-525d-b6a2-be76273b64aa",
+   "apps": [
+    "stripe_dashboard_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "32d69178-0080-5011-bb71-8ee11f637747",
+   "apps": [
+    "linkedin_mock",
+    "twitter_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "38fbc81b-338f-5fe6-9bf0-bb752d0a1b91",
+   "apps": [
+    "reddit_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "3d23d6b5-402e-58d8-aa4f-fa3d372397bb",
+   "apps": [
+    "stripe_dashboard_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "44f15182-66d5-51f0-acfd-bb8df6d9369f",
+   "apps": [
+    "stripe_dashboard_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4646094f-0566-5340-9512-6a64d24023ae",
+   "apps": [
+    "shopify_admin_mock",
+    "salesforce_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "47e88a92-40f1-58c8-b3b8-2b2d6be196a7",
+   "apps": [
+    "github_mock",
+    "jira_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "48c79ed3-310f-5f0d-a312-9d058b940665",
+   "apps": [
+    "github_mock",
+    "trello_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4a057cd3-0328-586e-9cef-ef8c32c71850",
+   "apps": [
+    "google_drive_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4c222df5-59bf-5b2f-8f76-01b631811315",
+   "apps": [
+    "stripe_dashboard_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4d9e82ad-a988-5928-bdfc-3b1a7e94e7ca",
+   "apps": [
+    "reddit_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4f56db81-0b2e-5483-abe5-62ac4a1ed28c",
+   "apps": [
+    "trello_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "502b4c22-343b-5fed-8824-4bed687fe347",
+   "apps": [
+    "google_drive_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "5134b51d-2336-5018-b2fe-4afa380d3941",
+   "apps": [
+    "linkedin_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "5632a4a1-350e-5b0e-9d87-b7002619c813",
+   "apps": [
+    "twitter_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "59118713-9ae2-5a86-b280-a52ead73510f",
+   "apps": [
+    "jira_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "5e1b2d1e-1b0b-5356-a265-6b316c883967",
+   "apps": [
+    "trello_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "61d7be87-feea-5359-b035-13c1a2891e63",
+   "apps": [
+    "google_drive_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "65169dc0-c269-5c0d-9708-d1d534a84150",
+   "apps": [
+    "trello_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "66dbb226-227f-53cb-bc89-f6a522026584",
+   "apps": [
+    "salesforce_mock",
+    "stripe_dashboard_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "67ef55d0-6bd3-55be-8c0c-47b3c3631fbb",
+   "apps": [
+    "trello_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "6be67549-5637-5146-ac61-9beea9de9c57",
+   "apps": [
+    "trello_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "6cd6a378-f1c6-564d-be03-1413b5435870",
+   "apps": [
+    "gitlab_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "7492296d-31f4-5f44-8100-365c3682a3cb",
+   "apps": [
+    "google_sheets_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "74c4c5b5-43e3-54f0-802d-2dd008fc97b3",
+   "apps": [
+    "twitter_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "7dd44e7a-12ee-5bfe-8091-413bb3d5012d",
+   "apps": [
+    "reddit_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "81244aae-aa35-5f30-aa77-8b241c53c50b",
+   "apps": [
+    "trello_mock",
+    "jira_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "8317bd3b-c531-5325-947b-7fcdcab8684c",
+   "apps": [
+    "twitter_mock",
+    "linkedin_mock",
+    "discord_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "86b04700-d951-5c9e-ad2e-13ea9029e6e9",
+   "apps": [
+    "google_sheets_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "8bd0b8f8-7f53-56d6-bad0-9bb768bb9fff",
+   "apps": [
+    "shopify_admin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "8db529b1-b354-5f08-9037-6d6f1006c7d5",
+   "apps": [
+    "salesforce_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "8f7ec35c-d9fa-5834-9656-7a6c305af829",
+   "apps": [
+    "shopify_admin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "916b5856-37cf-5c96-860a-78201bc89816",
+   "apps": [
+    "github_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "91bac395-84ee-5ec7-9084-efd84730a01f",
+   "apps": [
+    "reddit_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "97504c98-503c-52a7-bfba-e14267a1b31e",
+   "apps": [
+    "reddit_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "9a5a081f-7ef9-5eee-ac7d-7349ce9e8db1",
+   "apps": [
+    "jira_mock",
+    "trello_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "a0e160e8-4ad4-58a8-a57f-cc62a26fc761",
+   "apps": [
+    "jira_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "a10be1e0-c1eb-5651-b997-b26de44e9827",
+   "apps": [
+    "google_sheets_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "a34f66f8-7140-5a11-8eaf-c73203ae7470",
+   "apps": [
+    "google_drive_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "a3c38386-6b57-5ce0-b3f5-81269b58d851",
+   "apps": [
+    "gitlab_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "a65842ce-918a-564e-a9f9-3ba5fa00837b",
+   "apps": [
+    "google_sheets_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "aca9f61d-c626-5f4a-8e35-14b3c2c8d563",
+   "apps": [
+    "trello_mock",
+    "github_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "ad7989c7-c240-5970-b5a7-1057223ca13c",
+   "apps": [
+    "google_sheets_mock",
+    "stripe_dashboard_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "b3319357-bb9b-5eb4-a71c-e6c06007fd69",
+   "apps": [
+    "stripe_dashboard_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "b3ba8f57-ec73-5097-95d5-f29f5b2e8425",
+   "apps": [
+    "reddit_mock",
+    "twitter_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "b880a153-6934-587f-bfd9-f2c469c48fde",
+   "apps": [
+    "twitter_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "bcad581f-2ee2-529c-8866-1583c3f0cea9",
+   "apps": [
+    "google_sheets_mock",
+    "gmail_mock",
+    "stripe_dashboard_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "be126b0b-8bc4-5e3a-a936-ebf9e70f3198",
+   "apps": [
+    "notion_mock",
+    "jira_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c06f8b0a-1c3a-5f04-8a61-4aa66d6e5393",
+   "apps": [
+    "reddit_mock",
+    "twitter_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c282481a-4f0c-5241-b534-8ba35e9c893b",
+   "apps": [
+    "linkedin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c3f517a8-6e41-5ea2-bb49-6cdd7ac0a47b",
+   "apps": [
+    "jira_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c3f52674-fddb-54f9-8262-4fc067146eb1",
+   "apps": [
+    "reddit_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c4900bce-9cec-5f75-bd08-e1b9aef18c2f",
+   "apps": [
+    "trello_mock",
+    "jira_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "ca19e253-89dc-5563-81d5-487746e9dd7c",
+   "apps": [
+    "stripe_dashboard_mock",
+    "shopify_admin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "cb291dce-ef16-5c98-ab14-2caaaec7a840",
+   "apps": [
+    "reddit_mock",
+    "notion_mock",
+    "twitter_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "cfff191d-c6f7-5ac3-9e8f-810d1e07e75a",
+   "apps": [
+    "gitlab_mock",
+    "jira_mock",
+    "gmail_mock",
+    "slack_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d21b657e-354a-558c-81c1-71784d1aef93",
+   "apps": [
+    "shopify_admin_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d2c81b0f-f958-5b68-9beb-cf982e4d2c6d",
+   "apps": [
+    "twitter_mock",
+    "linkedin_mock",
+    "discord_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d539bd8b-5388-5480-9d07-47b971fa2076",
+   "apps": [
+    "google_sheets_mock",
+    "gmail_mock",
+    "shopify_admin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d8a0af26-b4b2-54f1-b4b2-813a962a0d65",
+   "apps": [
+    "gitlab_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "dd282436-537e-5297-ba3e-06e5a21bd530",
+   "apps": [
+    "shopify_admin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "df4f14b7-9211-5821-9c11-3dc2bb5cdfe8",
+   "apps": [
+    "linkedin_mock",
+    "salesforce_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "e62841a5-a65c-5236-bc22-9392886e4e89",
+   "apps": [
+    "jira_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "e97c0d74-032c-5099-bcfb-6f0ab52e9568",
+   "apps": [
+    "google_drive_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "e995923a-b45b-5167-b192-4ad58267478a",
+   "apps": [
+    "google_sheets_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "eaf89075-6261-58a2-8098-300b79c1fc03",
+   "apps": [
+    "linkedin_mock",
+    "salesforce_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "f051934e-bfd7-5482-825c-d9b08d0f7337",
+   "apps": [
+    "shopify_admin_mock",
+    "stripe_dashboard_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "f219e223-9740-578a-8068-eb4fb8e5ca57",
+   "apps": [
+    "stripe_dashboard_mock",
+    "shopify_admin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "f39c902b-5b93-5746-b6e6-a58683b456b4",
+   "apps": [
+    "twitter_mock",
+    "discord_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "fe7ca36d-bef5-5ef7-8841-a850f0de7ff1",
+   "apps": [
+    "shopify_admin_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "04b05731-d553-54c7-8e33-b839f7f363fe",
+   "apps": [
+    "github_mock",
+    "jira_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "1f78372b-535e-57ef-8e7b-b67078e6f99d",
+   "apps": [
+    "linkedin_mock",
+    "twitter_mock",
+    "discord_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "3800e51b-1756-52c0-b7a9-fb2917ab659c",
+   "apps": [
+    "salesforce_mock",
+    "gmail_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "3ed5fc64-e07c-5714-8162-a091951a6846",
+   "apps": [
+    "notion_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "61c5e5d8-5dfe-5019-b97a-0658f533ed2a",
+   "apps": [
+    "twitter_mock",
+    "linkedin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "65f02d83-8a4f-5d48-92df-b5dab31857fd",
+   "apps": [
+    "twitter_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "7555091e-68fd-567f-8ea6-c64cf66e19d5",
+   "apps": [
+    "github_mock",
+    "slack_mock",
+    "jira_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "896cd42a-3bb3-5d35-85e0-a5844d415536",
+   "apps": [
+    "linkedin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "9ee24932-b54f-5726-8c32-84dda5f82d28",
+   "apps": [
+    "twitter_mock",
+    "linkedin_mock",
+    "gmail_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a0b500d4-fb74-5b1b-9f49-c92b556bab13",
+   "apps": [
+    "linkedin_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a798c667-5a6c-57bf-bd2c-ae0a0d6b90c0",
+   "apps": [
+    "jira_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ab808354-ef14-584b-94f2-d1585b3c3206",
+   "apps": [
+    "slack_mock",
+    "jira_mock",
+    "gmail_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "b51a6077-d3df-5b38-9d70-24af29d347bf",
+   "apps": [
+    "twitter_mock",
+    "linkedin_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "d8ad4e12-934f-5be7-a2a6-4feab5778c15",
+   "apps": [
+    "jira_mock",
+    "slack_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ff1153a4-d6a7-5ab0-ab80-492aa2c59483",
+   "apps": [
+    "gmail_mock",
+    "slack_mock",
+    "salesforce_mock",
+    "notion_mock"
+   ],
+   "category": "multi_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "485d2e99-88ec-5f31-890f-94229e9d4ab9",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "5ce61063-d5d6-58d0-8166-35fdc7da374b",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "669c4bef-7958-5d47-8208-1a4f9a983658",
+   "apps": [
+    "monday_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "796da0e3-2126-5c65-a36f-b39ed02c8912",
+   "apps": [
+    "outlook_web_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "8f458761-c205-5b83-8374-41e764e6802f",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "bee6a5cc-6f7b-582e-ba49-0fe0c6b59ca3",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "ebc74462-4e0b-5e1e-be53-12485b3abae7",
+   "apps": [
+    "postman_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "fcdc1975-e1e6-5b5d-a35a-1d96824f752e",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "easy"
+  },
+  {
+   "id": "01ce855a-0d3a-539e-a3f4-219ca8624472",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "0228bc73-d8af-5306-8512-2b28c587db47",
+   "apps": [
+    "google_calendar_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "09b25478-fa92-5482-a2bb-33ffd5fea90f",
+   "apps": [
+    "monday_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "09e2d112-7fdd-597e-9749-6a932233ee0e",
+   "apps": [
+    "facebook_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "0f9f9465-5867-52ff-900c-706cf6574731",
+   "apps": [
+    "gitlab_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "124711db-0d72-5bd9-ba06-bbfdc361f533",
+   "apps": [
+    "facebook_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "1a3caa4b-b811-51de-a31d-7c763d44d9af",
+   "apps": [
+    "slack_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2b834611-af47-524e-9c37-c6030931101d",
+   "apps": [
+    "monday_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2c721e78-db9b-5c99-8000-39f070e14355",
+   "apps": [
+    "twitter_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2c8b8023-fc85-5f99-a60e-f518b8b48567",
+   "apps": [
+    "microsoft_teams_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "2eb23e15-069e-57ea-8b10-5afe318562c3",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "30bf8031-1165-5420-8cf1-b98567282d8d",
+   "apps": [
+    "trello_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "37edf595-1732-5e87-8e57-d7a0396f3110",
+   "apps": [
+    "salesforce_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "4bd349ab-c54e-5006-9ae5-e303018bec85",
+   "apps": [
+    "google_sheets_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "5525b1cc-f142-5788-b454-14521ea7a2cd",
+   "apps": [
+    "google_docs_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "5d563b08-965b-5dd4-a304-e984706812a3",
+   "apps": [
+    "reddit_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "68c11576-cfa4-55a9-aeae-f00470b995e3",
+   "apps": [
+    "github_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "6a235f25-6628-5475-941d-3b3a37e04ffc",
+   "apps": [
+    "gmail_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "763f7f55-0891-5cdd-a6d0-e075a15859ed",
+   "apps": [
+    "jira_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "7b121381-c479-5deb-9047-1cdc1fec1348",
+   "apps": [
+    "google_sheets_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "7c5fb7f5-1d0e-5a3c-8362-389f0f56378e",
+   "apps": [
+    "linkedin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "80679247-cc9e-5180-9241-57d26e1b350f",
+   "apps": [
+    "postman_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "aaa6ed9c-9ff1-545a-810f-7d0a6de46337",
+   "apps": [
+    "hubspot_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "af42701a-8235-5465-9a7a-3515f45584d3",
+   "apps": [
+    "jira_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "c75d2112-0a88-58d1-9025-6a765e10a726",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "caa5fcd5-9124-59a0-be28-1c90d8f30a41",
+   "apps": [
+    "shopify_admin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d602f222-8ee2-5587-b3f9-8a34e46e8f89",
+   "apps": [
+    "stripe_dashboard_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "d9a20d0e-ccb7-5aea-bfa1-fbf83eaf68c6",
+   "apps": [
+    "notion_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "ee1a84f1-ffc8-56ba-8d44-bb2be5395532",
+   "apps": [
+    "google_drive_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "f59f5a5f-bd7e-53d9-bc43-af36dcd6060c",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "hard"
+  },
+  {
+   "id": "04eb0674-bb14-5a2a-b534-3c09d2b8138c",
+   "apps": [
+    "linkedin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "0f964447-9b7e-544c-8e33-63239891bb4f",
+   "apps": [
+    "slack_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "116da72c-dee4-5a8a-94e5-34054e811344",
+   "apps": [
+    "linkedin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "118e5c12-a910-5337-a563-f30b3ee7cd64",
+   "apps": [
+    "twitter_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "12f2ec80-47e3-5e47-a99b-1d59dc6f6428",
+   "apps": [
+    "microsoft_teams_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "133a8676-fa79-518c-b000-5d51d4791db2",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "1ab4b321-c370-5b81-ac7c-5c4de7bfdeae",
+   "apps": [
+    "shopify_admin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "1f5c8fd7-a808-51c4-b387-d79733fcddb2",
+   "apps": [
+    "notion_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "1fdad310-bca9-5c54-8602-21dd9d7c555a",
+   "apps": [
+    "notion_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "2600637f-3e2e-5227-bc56-e1d763ffc2bd",
+   "apps": [
+    "reddit_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "2bf8765d-5d3d-5f85-a521-d077cc351095",
+   "apps": [
+    "stripe_dashboard_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "306c1175-9861-5cb1-b29a-659e88be335f",
+   "apps": [
+    "slack_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "30f3fa79-7995-588b-8961-a9efa8f0ddcd",
+   "apps": [
+    "hubspot_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "353ad31d-35cb-5b72-b3d2-a91b60decee7",
+   "apps": [
+    "trello_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "3b690579-f82b-5080-afde-42f591e6347a",
+   "apps": [
+    "notion_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "3ced4ea6-5966-570f-b40c-f3f98036494d",
+   "apps": [
+    "stripe_dashboard_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "3ee1c106-3f6f-55ce-8363-bf81ca7c1a8a",
+   "apps": [
+    "google_docs_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "4e824551-99cc-5f79-aa58-046924bfe61d",
+   "apps": [
+    "shopify_admin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "4f31ed19-7c41-5168-8839-387baf841e68",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "4fbe0b2e-7f9e-5752-8e56-4a99ab3887c8",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "527d0120-0a64-5403-9518-2ca87cac8ec4",
+   "apps": [
+    "jira_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "5721760c-a75e-5d34-b54b-843777b5196b",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "57a641fa-9123-5025-a766-2566ec72f8a1",
+   "apps": [
+    "linkedin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "5eb29157-5b0f-5c73-9247-249cf18f0511",
+   "apps": [
+    "microsoft_teams_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "67248f14-0cac-57a1-aed5-c0757bdbd6c0",
+   "apps": [
+    "slack_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "674f77a0-1631-597b-933c-f4e22038441c",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "68014633-28cb-56e1-9eab-e3be8161064a",
+   "apps": [
+    "postman_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "6de6e978-a9b9-5c79-88ce-5b550704e9b3",
+   "apps": [
+    "hubspot_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "6fcb3388-d3fe-5f34-b0ce-76dd3aaaa86b",
+   "apps": [
+    "microsoft_teams_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "73cc7fee-0c60-5265-a5cf-caaf800aab64",
+   "apps": [
+    "jira_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "7751d48f-088f-5a62-9dcd-fa3cade9147d",
+   "apps": [
+    "google_sheets_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "779b00a7-cb58-51a0-92cc-70334ac05087",
+   "apps": [
+    "salesforce_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "7b25f0da-0473-5dbb-aed0-d8471c528469",
+   "apps": [
+    "slack_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "7b7ebe84-6819-5a81-a4a7-5bbff9b8f264",
+   "apps": [
+    "reddit_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "7fafcab6-9941-5939-a01e-faf5e40e45c4",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "87f9cad7-ec0c-5c98-8afc-4480aa569ca6",
+   "apps": [
+    "microsoft_teams_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "89f0e801-4c21-52a7-8a8e-ea28846e594f",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "97b2d46c-7567-5cbd-99f5-dc50de74cad2",
+   "apps": [
+    "google_sheets_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "98588cfd-ce34-5fac-a74f-5dd1893b2c78",
+   "apps": [
+    "reddit_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "99433044-e09a-5526-b980-40d6b299e339",
+   "apps": [
+    "monday_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "9b76a095-cb9d-5bf8-9fce-c56b0dac4d54",
+   "apps": [
+    "salesforce_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "9f46ff25-7cd5-5d79-83e8-a6b916386a2a",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a0c52684-6347-5f30-a00a-8c7713c6f036",
+   "apps": [
+    "trello_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a10e2f88-f116-5a70-9ec1-58ef974d089b",
+   "apps": [
+    "google_sheets_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a38bf4fd-0fd0-5dd8-8a49-4c4b2edb34ec",
+   "apps": [
+    "hubspot_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a613a22b-bd5c-5f75-8e60-03f6c6a7072a",
+   "apps": [
+    "instacart_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "a6325d5c-6a3f-590d-843b-204d47e84e8c",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ab1627d0-fb99-588f-8a0b-44d018b1869a",
+   "apps": [
+    "salesforce_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ae7bc13b-21d8-5394-b72f-f333c3ccc8a1",
+   "apps": [
+    "instacart_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "b069adc7-0469-5578-9103-3c6d52e9e843",
+   "apps": [
+    "instagram_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "cf6fada2-db21-5dfd-af4a-62d5210f57cc",
+   "apps": [
+    "trello_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "d6717fe6-cc98-5103-b5ec-f297bf4baaaf",
+   "apps": [
+    "hubspot_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "d8600f30-8e31-5db0-9d8e-73dae2e9f8a3",
+   "apps": [
+    "jira_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "dcb25c28-e419-5b70-ab85-6d785893c729",
+   "apps": [
+    "pinterest_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "e54236c2-039b-5583-9e49-1f7e65557dd3",
+   "apps": [
+    "twitter_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ee034816-6ce2-5433-8ecd-b53981eca757",
+   "apps": [
+    "shopify_admin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ee86ff8c-3a6e-5f76-84fc-4845b7ed1e32",
+   "apps": [
+    "wechat_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ef47f7f2-e82e-5155-b27a-370c7449a941",
+   "apps": [
+    "stripe_dashboard_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "ef4e13c9-ba62-5fdb-9ace-70a99e4ed40a",
+   "apps": [
+    "twitter_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "efb21f04-3e33-551c-a7b1-5bb7aab09329",
+   "apps": [
+    "postman_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "f5ac7c62-2cd9-516b-8c5b-88806ad29922",
+   "apps": [
+    "linkedin_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  },
+  {
+   "id": "fda7b395-de06-5f15-adfd-e8fc5154106d",
+   "apps": [
+    "google_docs_mock"
+   ],
+   "category": "single_app",
+   "difficulty": "medium"
+  }
+ ]
+}

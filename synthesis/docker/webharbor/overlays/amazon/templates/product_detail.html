@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} - Amazon.com{% endblock %}
+
+{% block content %}
+<div class="pd-container">
+    <!-- Image Column -->
+    <div class="pd-image-col">
+        <div class="pd-main-image">
+            <img id="pd-main-img" src="{{ product.image }}" data-default-src="{{ product.image }}" alt="{{ product.name }}" onerror="this.style.display='none'">
+        </div>
+        <div class="pd-thumbs">
+            {% set gallery = product.get_gallery() %}
+            {% if gallery %}
+                <div class="pd-thumb active"><img src="{{ product.image }}" alt="thumb" onerror="this.parentElement.style.display='none'"></div>
+                {% for img in gallery[:5] %}
+                <div class="pd-thumb"><img src="{{ img }}" alt="thumb" onerror="this.parentElement.style.display='none'"></div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Info Column -->
+    <div class="pd-info-col">
+        {% if product.brand %}<a class="pd-brand" href="#">Visit the {{ product.brand }} Store</a>{% endif %}
+        <h1 class="pd-title">{{ product.name }}</h1>
+        <div class="pd-rating-row">
+            <span class="stars">{% for i in range(product.rating|int) %}★{% endfor %}{% for i in range(5 - product.rating|int) %}☆{% endfor %}</span>
+            <a href="#reviews-section" class="text-link">{{ product.rating }} ({{ product.review_count }} ratings)</a>
+            <span>|</span>
+            <span>{{ product.review_count * 3 }} answered questions</span>
+        </div>
+
+        <div class="pd-price-row">
+            {% if product.list_price > product.price %}
+            <div class="pd-price-deal">-{{ product.discount_percent() }}%</div>
+            {% endif %}
+            <div class="pd-price-main">
+                <span class="price-symbol">$</span><span class="price-whole">{{ product.price|int }}</span><span class="price-fraction">{{ '%02d'|format((product.price * 100)|round|int % 100) }}</span>
+            </div>
+            {% if product.list_price > product.price %}
+            <div class="pd-list-price">List Price: <span class="strike">${{ '%.2f'|format(product.list_price) }}</span></div>
+            {% endif %}
+        </div>
+
+        {% if product.description %}
+        <div class="pd-description">{{ product.description }}</div>
+        {% endif %}
+
+        <h3 style="font-size:16px;margin:15px 0 5px">About this item</h3>
+        <ul class="pd-features">
+            {% for f in product.get_features() %}
+            <li>{{ f }}</li>
+            {% endfor %}
+        </ul>
+
+        {% set variants = product.get_variants() %}
+        {% set variant_images = product.get_variant_images() %}
+        {% if variants %}
+        <div class="pd-variants">
+            {% for vtype, options in variants.items() %}
+            <div class="pd-variant-group">
+                <label class="pd-variant-label">{{ vtype|capitalize }}:</label>
+                <div class="pd-variant-options">
+                    {% for opt in options %}
+                    <span class="pd-variant-option{% if loop.first %} active{% endif %}"{% if variant_images.get(opt) %} data-vimg="{{ variant_images.get(opt) }}"{% endif %}>{{ opt }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Buy Box -->
+    <div class="pd-buy-box">
+        <div class="pd-buy-price">
+            <span class="price-symbol">$</span><span class="price-whole">{{ product.price|int }}</span><span class="price-fraction">{{ '%02d'|format((product.price * 100)|round|int % 100) }}</span>
+        </div>
+
+        {% if product.is_prime %}
+        <div class="pd-prime-badge">✓ prime</div>
+        {% endif %}
+
+        <div class="pd-buy-delivery">
+            <strong>{{ product.delivery_estimate or 'FREE delivery in 2 days' }}</strong>.<br>
+            {% if product.free_shipping %}FREE Shipping.{% else %}Standard shipping rates apply.{% endif %}<br>
+            Order within <strong>4 hrs 32 mins</strong> to get it by Tuesday.<br>
+            <a href="#">Details</a>
+        </div>
+
+        <div class="pd-stock">
+            {% if product.stock > 0 %}In Stock{% else %}Out of stock{% endif %}
+            {% if product.condition and product.condition != 'New' %}
+            &nbsp;·&nbsp; Condition: <strong>{{ product.condition }}</strong>
+            {% endif %}
+        </div>
+
+        <div class="pd-buy-qty">
+            <label>Qty:</label>
+            <select id="pd-qty">
+                {% for i in range(1, 11) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+            </select>
+        </div>
+
+        <form method="POST" action="{{ url_for('cart_add_form', product_id=product.id) }}" style="margin:0" id="add-to-cart-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <input type="hidden" name="variant" value="" id="cart-variant-input">
+            <input type="hidden" name="quantity" value="1" id="cart-qty-input">
+            <button type="submit" class="pd-buy-btn pd-buy-add">Add to Cart</button>
+        </form>
+        <form method="POST" action="{{ url_for('cart_add_form', product_id=product.id) }}" style="margin-top:6px">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <input type="hidden" name="variant" value="" id="buynow-variant-input">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="next" value="checkout">
+            <button type="submit" class="pd-buy-btn pd-buy-now">Buy Now</button>
+        </form>
+
+        <script>
+        // Variant selection: mark the picked option active within its group,
+        // update the cart variant string, and swap the hero image when the chosen
+        // colour ships its own product photo (data-vimg). The main image stays the
+        // default/hero colour until a colour with its own photo is selected.
+        const mainImg = document.getElementById('pd-main-img');
+        document.querySelectorAll('.pd-variant-option').forEach(opt => {
+            opt.style.cursor = 'pointer';
+            opt.addEventListener('click', () => {
+                opt.parentElement.querySelectorAll('.pd-variant-option')
+                    .forEach(s => s.classList.remove('active'));
+                opt.classList.add('active');
+                const parts = [];
+                document.querySelectorAll('.pd-variant-group').forEach(g => {
+                    const label = g.querySelector('.pd-variant-label').textContent.replace(':', '').trim();
+                    const active = g.querySelector('.pd-variant-option.active');
+                    if (active) parts.push(label + ': ' + active.textContent.trim());
+                });
+                const v = parts.join(', ');
+                document.querySelectorAll('#cart-variant-input, #buynow-variant-input').forEach(el => el.value = v);
+                if (mainImg) {
+                    const vimg = opt.getAttribute('data-vimg');
+                    mainImg.src = vimg || mainImg.getAttribute('data-default-src');
+                    mainImg.style.display = '';
+                }
+            });
+        });
+        // Update quantity hidden input from the qty selector
+        const qtySelect = document.getElementById('pd-qty');
+        if (qtySelect) {
+            qtySelect.addEventListener('change', () => {
+                document.getElementById('cart-qty-input').value = qtySelect.value;
+            });
+        }
+        </script>
+
+        <div style="font-size:12px;margin-top:10px" id="return-policy">
+            <div><strong>Ships from:</strong> Amazon.com</div>
+            <div><strong>Sold by:</strong> Amazon.com</div>
+            <div><strong>Returns:</strong> {{ product.return_policy }}</div>
+            {% if product.free_returns %}<div style="color:#007600"><strong>FREE Returns</strong> — Return this item for free within 30 days.</div>{% endif %}
+            {% if product.release_date %}<div><strong>Release date:</strong> {{ product.release_date }}</div>{% endif %}
+        </div>
+
+        <button type="button" class="btn btn-outline btn-full mt-10" id="wishlist-btn" onclick="toggleWishlist({{ product.id }}, this)">
+            {% if in_wishlist %}♥ In Wishlist{% else %}♡ Add to Wishlist{% endif %}
+        </button>
+    </div>
+</div>
+
+<!-- Top Review Highlight (agent-friendly, above gallery) -->
+{% if top_review %}
+<div class="pd-top-review" id="top-review" style="max-width:1200px;margin:20px auto;padding:20px;background:#fffbe6;border:1px solid #f0c36d;border-radius:4px">
+    <h2 style="font-size:18px;margin:0 0 10px">Top Review</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span class="stars" style="color:#ffa41c;font-size:18px">{% for i in range(top_review.rating) %}★{% endfor %}{% for i in range(5 - top_review.rating) %}☆{% endfor %}</span>
+        <strong>{{ top_review.title }}</strong>
+    </div>
+    <div style="font-size:13px;color:#565959;margin-bottom:8px">
+        By <strong>{{ top_review.user.name }}</strong>
+        {% if top_review.verified %} &middot; <span style="color:#c45500">Verified Purchase</span>{% endif %}
+        &middot; Reviewed on {{ top_review.created_at.strftime('%B %d, %Y') }}
+    </div>
+    <p style="font-size:14px;line-height:1.5;margin:0">{{ top_review.body }}</p>
+</div>
+{% endif %}
+
+<!-- Specs -->
+<div class="pd-gallery-container">
+    <div class="pd-gallery-section" style="padding:30px 20px;text-align:left;max-width:1200px;margin:0 auto">
+        <h2 style="text-align:center">Product details</h2>
+        <table class="specs-table">
+            {% for k, v in product.get_specs().items() %}
+            <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+            {% endfor %}
+            <tr><th>Brand</th><td>{{ product.brand }}</td></tr>
+            <tr><th>Category</th><td>{{ product.category_slug|capitalize }}</td></tr>
+            <tr><th>Customer Ratings</th><td>{{ product.rating }} out of 5 ({{ product.review_count }} reviews)</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- Gallery Sections (rich content) -->
+<div class="pd-gallery-container">
+    {% set gallery = product.get_gallery() %}
+    {% if gallery|length >= 2 %}
+    <section class="pd-gallery-section">
+        <h2>Designed for you</h2>
+        <p>Discover the thoughtful design and premium materials that go into every {{ product.brand }} product.</p>
+        <div class="pd-gallery-images">
+            {% for img in gallery[:3] %}
+            <div class="pd-gallery-img"><img src="{{ img }}" alt="{{ product.name }}" onerror="this.parentElement.style.display='none'"></div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if gallery|length >= 4 %}
+    <section class="pd-gallery-section">
+        <h2>Features at a glance</h2>
+        <p>Here's what makes the {{ product.name }} stand out from the rest.</p>
+        <div class="pd-gallery-images">
+            {% for img in gallery[3:6] %}
+            <div class="pd-gallery-img"><img src="{{ img }}" alt="{{ product.name }} feature" onerror="this.parentElement.style.display='none'"></div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if gallery|length >= 7 %}
+    <section class="pd-gallery-section">
+        <h2>Built to last</h2>
+        <p>Engineered for everyday use with premium materials and rigorous quality standards.</p>
+        <div class="pd-gallery-images">
+            {% for img in gallery[6:9] %}
+            <div class="pd-gallery-img"><img src="{{ img }}" alt="{{ product.name }} quality" onerror="this.parentElement.style.display='none'"></div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if gallery|length >= 10 %}
+    <section class="pd-gallery-section">
+        <h2>In the box</h2>
+        <p>Everything you need to get started, right out of the box.</p>
+        <div class="pd-gallery-images">
+            {% for img in gallery[9:12] %}
+            <div class="pd-gallery-img"><img src="{{ img }}" alt="{{ product.name }} box contents" onerror="this.parentElement.style.display='none'"></div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<!-- Related Products -->
+{% if related %}
+<div class="product-row related-section">
+    <div class="product-row-header">
+        <h2>Customers who viewed this item also viewed</h2>
+    </div>
+    <div class="row-scroll">
+        {% for p in related[:6] %}
+        <a class="row-card" href="{{ url_for('product_detail', slug=p.slug) }}">
+            <img src="{{ p.image }}" alt="{{ p.name }}" onerror="this.style.display='none'">
+            <div class="row-card-brand">{{ p.brand }}</div>
+            <div class="row-card-title">{{ p.name }}</div>
+            <div class="row-card-price">
+                <span class="price-symbol">$</span><span class="price-whole">{{ p.price|int }}</span><span class="price-fraction">{{ '%02d'|format((p.price * 100)|round|int % 100) }}</span>
+            </div>
+            <div class="rating">
+                <span class="stars">{% for i in range(p.rating|int) %}★{% endfor %}{% for i in range(5 - p.rating|int) %}☆{% endfor %}</span>
+                <span>({{ p.review_count }})</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Reviews Section -->
+<div class="reviews-section" id="reviews-section">
+    <h2>Customer Reviews</h2>
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;padding:15px;background:#f7f7f7;border-radius:4px">
+        <div style="font-size:48px;font-weight:400">{{ product.rating }}</div>
+        <div>
+            <div class="stars" style="font-size:24px">{% for i in range(product.rating|int) %}★{% endfor %}{% for i in range(5 - product.rating|int) %}☆{% endfor %}</div>
+            <div style="color:#565959;font-size:13px">{{ product.review_count }} global ratings</div>
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div class="review-form">
+        <h3>Write a customer review</h3>
+        <form method="POST" action="{{ url_for('add_review', slug=product.slug) }}">
+            {{ review_form.csrf_token }}
+            <label>Rating</label>
+            <div class="star-input">
+                <input type="radio" id="s5" name="rating" value="5" checked>
+                <label for="s5">★</label>
+                <input type="radio" id="s4" name="rating" value="4">
+                <label for="s4">★</label>
+                <input type="radio" id="s3" name="rating" value="3">
+                <label for="s3">★</label>
+                <input type="radio" id="s2" name="rating" value="2">
+                <label for="s2">★</label>
+                <input type="radio" id="s1" name="rating" value="1">
+                <label for="s1">★</label>
+            </div>
+            <label for="r-title">Title</label>
+            <input type="text" id="r-title" name="title" placeholder="What's most important to know?" required>
+            <label for="r-body">Review</label>
+            <textarea id="r-body" name="body" placeholder="What did you like or dislike?" required></textarea>
+            <button type="submit" class="btn mt-10">Submit Review</button>
+        </form>
+    </div>
+    {% else %}
+    <div style="padding:15px;background:#f7f7f7;border-radius:4px;margin-bottom:20px">
+        <a href="{{ url_for('login') }}">Sign in</a> to write a review.
+    </div>
+    {% endif %}
+
+    {% if reviews %}
+    <p style="font-size:13px;color:#767676;margin:6px 0 14px 0">
+        Showing {{ reviews|length }} top reviews of {{ product.review_count }} total ratings
+    </p>
+    {% endif %}
+
+    {% for r in reviews %}
+    <div class="review-item">
+        <div class="review-header">
+            <div class="review-avatar">{{ r.user.name[0]|upper }}</div>
+            <div class="review-author">{{ r.user.name }}</div>
+        </div>
+        <div class="stars">{% for i in range(r.rating) %}★{% endfor %}{% for i in range(5 - r.rating) %}☆{% endfor %}</div>
+        <h3 class="review-title">{{ r.title }}</h3>
+        <div class="review-meta">
+            {% if r.verified %}<span class="review-verified">Verified Purchase</span> ·{% endif %}
+            Reviewed on {{ r.created_at.strftime('%B %d, %Y') }}
+        </div>
+        <p class="review-body">{{ r.body }}</p>
+        {% if current_user.is_authenticated and r.user_id == current_user.id %}
+        <form method="POST" action="{{ url_for('delete_review', review_id=r.id) }}" style="display:inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <button type="submit" class="btn-link">Delete review</button>
+        </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+    {% endfor %}
+
+    {% if reviews and product.review_count and product.review_count > reviews|length %}
+    <p style="font-size:12px;color:#999;margin-top:10px;font-style:italic">
+        Reviews are sampled; older reviews are archived.
+    </p>
+    {% endif %}
+</div>
+
+{% endblock %}

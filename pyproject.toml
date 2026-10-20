@@ -1,0 +1,4 @@
+# Virtual uv workspace root: one `uv sync` here installs every member.
+
+[tool.uv.workspace]
+members = ["synthesis", "evaluation", "wildawm_cli", "wildawm_common"]

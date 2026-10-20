@@ -1,0 +1,69 @@
+[project]
+name = "awm-in-the-wild"
+version = "0.1.0"
+description = "World and cross-interface task synthesis for general computer-use agents"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.9.0",
+    "bcrypt>=5.0.0",
+    "fastapi>=0.135.2",
+    "fastapi-mcp>=0.4.0",
+    "json-repair>=0.61.0",
+    "mcp>=1.26.0,<2",
+    "openai>=2.38.0",
+    "simpleargparser>=0.2.4",
+    "sqlalchemy>=2.0.48",
+    "tabulate>=0.10.0",
+    "tqdm>=4.67.0",
+    "uvicorn>=0.42.0",
+    "wildawm-common",
+]
+
+[project.scripts]
+awm = "wildawm.cli.awm:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["wildawm"]
+
+[tool.hatch.build.targets.sdist]
+# Source release only; run data (worlds, logs, tasks) never enters the sdist.
+include = [
+    "/wildawm",
+    "/configs",
+    "/docker",
+    "/docker-compose.unified.yml",
+    "/.dockerignore",
+    "/.env.example",
+    "/models.example.json",
+    "/pyproject.toml",
+    "/uv.lock",
+]
+exclude = [
+    "/logs",
+    "/runtime",
+    "/tasks_xai",
+    "/worlds",
+    "/outputs",
+    "/.venv",
+    "/.pytest_cache",
+    "**/__pycache__",
+    "**/*.pyc",
+]
+
+[tool.pytest.ini_options]
+# Run-data trees hold synthesized persona workspaces whose tests must not be collected.
+testpaths = ["tests"]
+norecursedirs = ["worlds", "tasks_xai", "outputs", ".venv"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+]
+
+[tool.uv.sources]
+wildawm-common = { workspace = true }

@@ -1,0 +1,31 @@
+# Privileged creator image: WebHarbor sites plus the tools the synthesizer uses inside a world.
+FROM wildawm/wildawm-webharbor-base@sha256:0c68c23b176d8ce6ab0e69d0a4baf97d1ccd9863b037142b63121125dc4390c5
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates sqlite3 git jq less \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN for d in /opt/WebSyn/*/instance_seed; do chmod -R a+rwX "$d" 2>/dev/null || true; done
+
+# Keep OPENCODE_VERSION in sync with Dockerfile.agent.
+ARG OPENCODE_VERSION=1.17.7
+RUN curl -fsSL https://opencode.ai/install | bash -s -- --version "${OPENCODE_VERSION}" \
+    && mv /root/.opencode/bin/opencode /usr/local/bin/opencode \
+    && chmod a+rx /usr/local/bin/opencode \
+    && rm -rf /root/.opencode \
+    && (pip install --no-cache-dir --break-system-packages mcp json_repair \
+        || pip install --no-cache-dir mcp json_repair \
+        || echo "[creator] mcp pip install failed (non-fatal — opencode vision MCP unavailable)")
+
+COPY docker/creator/load_webharbor_seeds.py /opt/load_webharbor_seeds.py
+COPY docker/creator/creator_boot.sh         /opt/creator_boot.sh
+RUN mkdir -p /usr/local/lib/python3.12/site-packages/wildawm
+COPY wildawm/__init__.py                    /usr/local/lib/python3.12/site-packages/wildawm/__init__.py
+COPY wildawm/json_utils.py                  /usr/local/lib/python3.12/site-packages/wildawm/json_utils.py
+COPY wildawm/const_config.py                /usr/local/lib/python3.12/site-packages/wildawm/const_config.py
+RUN chmod +x /opt/creator_boot.sh /opt/load_webharbor_seeds.py
+
+ENV AWM_WORLD_DIR=/world
+EXPOSE 8101
+
+ENTRYPOINT ["/opt/creator_boot.sh"]

@@ -1,0 +1,21 @@
+{
+  "_comment": "Source of truth for WebHarbor domain ↔ port mapping. Drives both the runtime Caddyfile generated in entrypoint.sh and the docker-compose network aliases.",
+  "_port_origin": "Ports are dictated by the pinned upstream WebHarbor image — see /opt/websyn_start.sh inside the image. Order = order of the SITES bash array, BASE_PORT=40000.",
+  "sites": [
+    {"id": "allrecipes",           "port": 40000, "domains": ["www.allrecipes.com"]},
+    {"id": "amazon",               "port": 40001, "domains": ["www.amazon.com"]},
+    {"id": "apple",                "port": 40002, "domains": ["www.apple.com"]},
+    {"id": "arxiv",                "port": 40003, "domains": ["arxiv.org"]},
+    {"id": "bbc_news",             "port": 40004, "domains": ["www.bbc.com"]},
+    {"id": "booking",              "port": 40005, "domains": ["www.booking.com"]},
+    {"id": "github",               "port": 40006, "domains": ["github.com"]},
+    {"id": "google_flights",       "port": 40007, "domains": ["flights.google.com"]},
+    {"id": "google_map",           "port": 40008, "domains": ["maps.google.com"]},
+    {"id": "google_search",        "port": 40009, "domains": ["www.google.com"]},
+    {"id": "huggingface",          "port": 40010, "domains": ["huggingface.co"]},
+    {"id": "wolfram_alpha",        "port": 40011, "domains": ["www.wolframalpha.com"]},
+    {"id": "cambridge_dictionary", "port": 40012, "domains": ["dictionary.cambridge.org"]},
+    {"id": "coursera",             "port": 40013, "domains": ["www.coursera.org"]},
+    {"id": "espn",                 "port": 40014, "domains": ["www.espn.com"]}
+  ]
+}

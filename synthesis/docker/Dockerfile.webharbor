@@ -1,0 +1,38 @@
+# Caddy on top of WebHarbor: serve the 15 sites as https://www.<site>.com (internal CA).
+
+FROM caddy:2-alpine AS caddy-src
+
+FROM wildawm/wildawm-webharbor-base@sha256:0c68c23b176d8ce6ab0e69d0a4baf97d1ccd9863b037142b63121125dc4390c5
+
+COPY --from=caddy-src /usr/bin/caddy /usr/local/bin/caddy
+
+RUN mkdir -p /etc/caddy /var/lib/caddy /opt/webharbor-config
+
+COPY docker/webharbor/sites.json     /opt/webharbor-config/sites.json
+COPY docker/webharbor/entrypoint.sh  /entrypoint.sh
+COPY docker/webharbor/control_server.py /opt/control_server.py
+COPY docker/webharbor/site_runner.py /opt/site_runner.py
+COPY docker/webharbor/websyn_start.sh /opt/websyn_start.sh
+RUN chmod +x /entrypoint.sh
+RUN chmod +x /opt/websyn_start.sh
+
+# Site fixes overlaid onto the upstream sources under /opt/WebSyn/<site>.
+COPY docker/webharbor/overlays/amazon/app.py \
+     /opt/WebSyn/amazon/app.py
+COPY docker/webharbor/overlays/amazon/templates/product_detail.html \
+     /opt/WebSyn/amazon/templates/product_detail.html
+COPY docker/webharbor/overlays/amazon/static/images/amazon_real/fellow-stagg-ekg-gooseneck-kettle-stone-blue.jpg \
+     /opt/WebSyn/amazon/static/images/amazon_real/fellow-stagg-ekg-gooseneck-kettle-stone-blue.jpg
+
+# Upstream templates return HTTP 500 when a place has NULL opening hours.
+COPY docker/webharbor/overlays/google_map/templates/_place_card.html \
+     /opt/WebSyn/google_map/templates/_place_card.html
+COPY docker/webharbor/overlays/google_map/templates/place_detail.html \
+     /opt/WebSyn/google_map/templates/place_detail.html
+
+# Root CA lands at /var/lib/caddy/pki/authorities/local/root.crt (exported via compose).
+ENV XDG_DATA_HOME=/var/lib
+
+EXPOSE 80 443 8101
+
+ENTRYPOINT ["/entrypoint.sh"]
