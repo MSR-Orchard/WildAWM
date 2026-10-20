@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent World Model in the Wild (WildAWM)</title>
+<meta name="description" content="WildAWM synthesizes personal-computer environments with GUI, MCP, and CLI interfaces and cross-interface tasks checked by execution-based quality gates, using only open-source models.">
+<meta name="theme-color" content="#13294B">
+<meta property="og:title" content="Agent World Model in the Wild: Computer-Use Agent Environment Synthesis">
+<meta property="og:description" content="Persona-driven personal-computer worlds, cross-interface tasks, and five execution-based quality gates for training general computer-use agents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://msr-orchard.github.io/WildAWM/">
+<link rel="canonical" href="https://msr-orchard.github.io/WildAWM/">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/viewer.css">
+<script>document.documentElement.classList.add('js');</script>
+<script defer src="assets/data/site-data.js"></script>
+<script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/pipeline.js"></script>
+<script defer src="assets/js/dataset.js"></script>
+<script defer src="assets/js/results.js"></script>
+<script defer src="assets/js/viewer.js"></script>
+</head>
+<body>
+<!-- Provenance: each statistic is followed by a src comment. "paper:" is the arXiv LaTeX directory
+     AWM-IN-THE-WILD-ICLR2027/arxiv_after_iclr_submission/; "repo:" is the opensource-wildawm monorepo root. -->
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="bar" id="bar">
+  <div class="bar-in">
+    <a class="bar-brand" href="#top">WildAWM</a>
+    <nav aria-label="Sections">
+      <ul class="bar-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#dataset">Dataset</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#findings">Findings</a></li>
+        <li><a href="#examples">Examples</a></li>
+        <li><a href="#citation">Citation</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <!-- Logos: paper:figures/logos/{unc,microsoft,georgiatech,northeastern-mark}.pdf, converted to SVG; heights follow the paper header. -->
+  <div class="orgs" aria-hidden="true">
+    <img class="org-unc" src="assets/img/logos/unc.svg" alt="">
+    <img class="org-ms" src="assets/img/logos/microsoft.svg" alt="">
+    <img class="org-gt" src="assets/img/logos/georgiatech.svg" alt="">
+    <img class="org-neu" src="assets/img/logos/northeastern.svg" alt="">
+  </div>
+  <!-- src: paper:arxiv_preprint.tex (\title, \author block, \@thanks footnote) -->
+  <h1 class="title"><span class="title-a">Agent World Model in the Wild:</span> <span class="title-b">Computer-Use Agent Environment Synthesis</span></h1>
+  <!-- Author links come from the authors; TODO: link for Haorui Wang. -->
+  <p class="authors">
+    <span class="au"><a href="https://zhaoyang.win/">Zhaoyang Wang</a><sup>1,*</sup></span>
+    <span class="au"><a href="https://qianhuiwu.github.io/">Qianhui Wu</a><sup>2,†</sup></span>
+    <span class="au">Haorui Wang<sup>3,*</sup></span>
+    <span class="au"><a href="https://simonucl.github.io/">Simon Yu</a><sup>4,*</sup></span>
+    <span class="au"><a href="https://www.microsoft.com/en-us/research/people/baolinpeng/">Baolin Peng</a><sup>2</sup></span>
+    <span class="au"><a href="https://scholar.google.com/citations?user=oopKCDMAAAAJ&amp;hl=en">Canwen Xu</a><sup>5</sup></span>
+    <span class="au"><a href="https://sites.google.com/site/hcheng2site/">Hao Cheng</a><sup>2</sup></span>
+    <span class="au"><a href="https://wenlinyao.github.io/">Wenlin Yao</a><sup>2</sup></span>
+    <span class="au"><a href="https://scholar.google.com/citations?user=1G8RH_YAAAAJ&amp;hl=en">Boyi Liu</a><sup>5</sup></span>
+    <span class="au"><a href="https://yitewang.github.io/">Yite Wang</a><sup>5</sup></span>
+    <span class="au"><a href="https://www.microsoft.com/en-us/research/people/jfgao/">Jianfeng Gao</a><sup>2</sup></span>
+    <span class="au"><a href="https://www.huaxiuyao.io/">Huaxiu Yao</a><sup>1</sup></span>
+  </p>
+  <p class="affils">
+    <span><sup>1</sup>UNC-Chapel Hill</span>
+    <span><sup>2</sup>Microsoft Research</span>
+    <span><sup>3</sup>Georgia Tech</span>
+    <span><sup>4</sup>Northeastern University</span>
+    <span><sup>5</sup>Independent Researcher</span>
+  </p>
+  <p class="notes"><span><sup>*</sup>Work done during internships at Microsoft Research.</span> <span><sup>†</sup>Corresponding author.</span> <span><a href="mailto:zhaoyang@cs.unc.edu">zhaoyang@cs.unc.edu</a>, <a href="mailto:qianhuiwu@microsoft.com">qianhuiwu@microsoft.com</a></span></p>
+  <!-- src: paper:arxiv_preprint.tex :: "The code is publicly available at \href{https://github.com/MSR-Orchard/WildAWM}" -->
+  <!-- Paper, dataset, model, and Harbor links from the authors (2026-10-18/19). -->
+  <div class="links">
+    <a class="pill" href="https://arxiv.org/abs/2610.26828">Paper</a>
+    <a class="pill" href="https://github.com/MSR-Orchard/WildAWM">Code</a>
+    <a class="pill" href="https://huggingface.co/datasets/ChilleD/WildAWM">Data</a>
+    <a class="pill" href="https://huggingface.co/collections/ChilleD/agent-world-model-in-the-wild">Models</a>
+    <a class="pill" href="#citation">BibTeX</a>
+  </div>
+</header>
+
+<main id="main">
+
+<figure class="teaser wide">
+  <a class="fig-link" href="assets/img/fig/overview.webp" target="_blank" rel="noopener" aria-label="Open the overview figure at full size">
+    <img src="assets/img/fig/overview.webp" width="2400" height="1254" fetchpriority="high" decoding="async" alt="WildAWM overview. Left, world synthesis: a coding agent with skills turns personas and day plans into a personal computer with GUI, MCP, and CLI, producing world state W(c, d). Center, XAI task synthesis: exploration, proposal, diversity gate, the XAI artifact (task, rubric, verifier, hint), rollouts with and without hints, and judgments by a verifier, an LLM judge, and an agent judge, followed by the judge consistency, initial unsatisfaction, task solvability, task difficulty, and counterfactual probe gates. Right: online RL for a general computer-use agent over task, environment, and verifier.">
+  </a>
+  <!-- src: paper:arxiv_preprint.tex (Figure fig:main caption); image rendered from paper:figures/main.pdf -->
+  <figcaption><b>WildAWM.</b> World synthesis grows a persona's personal computer day by day, exposing GUI, MCP, and CLI interfaces. XAI task synthesis turns a world state into cross-interface tasks that must pass five quality gates. The resulting task, environment, and verifier train general computer-use agents.</figcaption>
+</figure>
+
+<!-- ======================================================================= OVERVIEW -->
+<section class="sec" id="overview" aria-labelledby="overview-h">
+  <div class="col">
+    <h2 id="overview-h"><span class="emo" aria-hidden="true">🔭</span>Overview</h2>
+    <!-- src: paper:arxiv_preprint.tex (Introduction, paragraphs 1–2) -->
+    <p>Computer-use agents increasingly learn by acting in executable environments. Real computers are a poor place to do that: their state is hard to reset, online services drift, and exploratory actions can have real consequences. Synthetic environments restore control, but most pipelines build a single interface at a time, such as the browser, tool calls, or the terminal.</p>
+    <!-- src: paper:arxiv_preprint.tex (Introduction, paragraph 4; abstract: "\ours is entirely powered by open-source models") -->
+    <p>WildAWM synthesizes a whole personal computer for each persona, one day at a time, so websites, MCP services, and local files share one evolving state. It then writes cross-interface (XAI) tasks grounded in these worlds and keeps only those that pass five execution-based quality gates. <strong>The entire pipeline is powered by open-source models, without any proprietary models.</strong></p>
+    <ul class="highlights">
+      <li><b>341 long-horizon tasks.</b><!-- src: paper:tables/task_syn_basics_full_width_v1.tex :: "Tasks & 341" --> Some take over 100 agent steps,<!-- src: paper:arxiv_preprint.tex :: "can require over 100 agent steps to solve" --> and GPT-6-Astra reaches only about 60% pass@1.<!-- src: paper:arxiv_preprint.tex :: "GPT-6-Astra achieves only about 60\% \passatk{1}" --></li>
+      <li><b>Transfer to unseen benchmarks.</b> Qwen3.6-35B-A3B and Qwen3.5-4B <b>trained only in WildAWM worlds</b> improve on all eight out-of-distribution benchmarks: web agents (Online-Mind2Web, WebArena), claw agents (QwenClawBench, ClawEval), and computer-use agents (CUA-Gym, OSWorld-Verified, OSWorld 2.0, Agents&rsquo; Last Exam). They <b>gain <span class="num">+10.58</span> and <span class="num">+8.21</span> points</b> on average.<!-- src: paper:arxiv_preprint.tex :: "The 35B-A3B and 4B models gain $+10.58$ and $+8.21$ points on average" --></li>
+      <li><b>Open-source end to end.</b> Synthesis runs on three open-source models and six agent harnesses, without relying on any proprietary models.<!-- src: paper:arxiv_preprint.tex :: "from 18 model--harness pairs formed by three open-source models" ; "\ours is entirely powered by open-source models" --></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================================= METHOD -->
+<section class="sec" id="method" aria-labelledby="method-h">
+  <div class="col">
+    <h2 id="method-h"><span class="emo" aria-hidden="true">🛠️</span>Method</h2>
+    <!-- src: paper:arxiv_preprint.tex (Section 3, Agent World Model in the Wild) -->
+    <p>Two stages produce the data. World synthesis grows a persona's computer day by day; task synthesis turns one day's world state into verified cross-interface tasks. Select a step.</p>
+  </div>
+
+  <div class="wide">
+    <div class="pipe" id="pipe">
+      <div class="pipe-tabs" role="tablist" aria-label="Pipeline steps" data-tabs="pipe">
+        <div class="pipe-row" role="presentation">
+          <span class="pipe-k" aria-hidden="true">World synthesis</span>
+          <button class="pipe-tab" role="tab" id="pt-1" aria-controls="pp-1" aria-selected="true"><span class="n">1</span><span class="l"><span class="visually-hidden">World synthesis: </span>Persona</span></button>
+          <button class="pipe-tab" role="tab" id="pt-2" aria-controls="pp-2" aria-selected="false" tabindex="-1"><span class="n">2</span><span class="l"><span class="visually-hidden">World synthesis: </span>Day plan</span></button>
+          <button class="pipe-tab" role="tab" id="pt-3" aria-controls="pp-3" aria-selected="false" tabindex="-1"><span class="n">3</span><span class="l"><span class="visually-hidden">World synthesis: </span>Build the day</span></button>
+          <button class="pipe-tab" role="tab" id="pt-4" aria-controls="pp-4" aria-selected="false" tabindex="-1"><span class="n">4</span><span class="l"><span class="visually-hidden">World synthesis: </span>Snapshot</span></button>
+        </div>
+        <div class="pipe-row" role="presentation">
+          <span class="pipe-k" aria-hidden="true">Task synthesis</span>
+          <button class="pipe-tab" role="tab" id="pt-5" aria-controls="pp-5" aria-selected="false" tabindex="-1"><span class="n">1</span><span class="l"><span class="visually-hidden">Task synthesis: </span>Propose</span></button>
+          <button class="pipe-tab" role="tab" id="pt-6" aria-controls="pp-6" aria-selected="false" tabindex="-1"><span class="n">2</span><span class="l"><span class="visually-hidden">Task synthesis: </span>Roll out</span></button>
+          <button class="pipe-tab" role="tab" id="pt-7" aria-controls="pp-7" aria-selected="false" tabindex="-1"><span class="n">3</span><span class="l"><span class="visually-hidden">Task synthesis: </span>Judge</span></button>
+          <button class="pipe-tab" role="tab" id="pt-8" aria-controls="pp-8" aria-selected="false" tabindex="-1"><span class="n">4</span><span class="l"><span class="visually-hidden">Task synthesis: </span>Gate</span></button>
+        </div>
+      </div>
+
+      <div class="pipe-panel" role="tabpanel" id="pp-1" aria-labelledby="pt-1">
+        <div class="pp-text">
+          <h3>Persona</h3>
+          <!-- src: paper:arxiv_preprint.tex (Persona and Day Planning) -->
+          <p>A coding agent writes each persona from scratch: an occupation, named contacts, frequently used websites, and storylines that run across several days. Candidates too similar to accepted personas are regenerated with feedback.</p>
+        </div>
+        <dl class="pp-facts">
+          <div><dt>Personas</dt><dd>36<!-- src: paper:tables/world_syn_basics.tex :: "Personas & 36" --></dd></div>
+          <div><dt>Websites per persona</dt><dd>3–15<!-- src: paper:appendix.tex :: "Each persona profile lists 3 to 15 websites, 4 to 8 MCP services, and 2 to 5 multi-day story arcs" --></dd></div>
+          <div><dt>MCP services per persona</dt><dd>4–8<!-- src: same sentence --></dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-2" aria-labelledby="pt-2" hidden>
+        <div class="pp-text">
+          <h3>Day plan</h3>
+          <!-- src: paper:arxiv_preprint.tex :: "the generator would inspect previous day's state $W(c,d-1)$ to maintain continuity with ongoing activities before planning day $d$" -->
+          <p>Plans are written one day at a time. Before planning day <i>d</i>, the agent inspects the actual world state <i>W</i>(<i>c</i>, <i>d</i>−1), so activities pick up where they left off. Each plan lists the people, applications, databases, and files involved.</p>
+        </div>
+        <dl class="pp-facts">
+          <div><dt>Days per persona</dt><dd>8–30<!-- src: paper:appendix.tex :: "each persona is materialized into 8 to 30 world states, 640 in total" --></dd></div>
+          <div><dt>World states</dt><dd>640<!-- src: paper:tables/world_syn_basics.tex :: "World states & 640" --></dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-3" aria-labelledby="pt-3" hidden>
+        <div class="pp-text">
+          <h3>Build the day</h3>
+          <!-- src: paper:arxiv_preprint.tex (Skill-Enhanced Generation) :: "We retain such state only if two independent replays produce the same state, and all services and websites remain healthy." -->
+          <p>The agent reuses event skills and services from a shared library, adds new ones when a plan needs them, and writes a deterministic program that updates databases, websites, and files. A day is kept only if two replays produce the same state and every service stays healthy.</p>
+        </div>
+        <dl class="pp-facts">
+          <div><dt>Reusable event skills</dt><dd>83<!-- src: paper:tables/world_syn_basics.tex :: "Reusable skills & 83" --></dd></div>
+          <div><dt>Mirrored websites</dt><dd>15<!-- src: paper:tables/world_syn_basics.tex :: "Websites/MCPs & 15/8" --></dd></div>
+          <div><dt>MCP apps</dt><dd>8<!-- src: same row --></dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-4" aria-labelledby="pt-4" hidden>
+        <div class="pp-text">
+          <h3>Snapshot</h3>
+          <!-- src: paper:arxiv_preprint.tex :: "We denote the cumulative state of persona $c$ after day $d$ as $W(c,d)$, which initializes and resets the environment state." -->
+          <p>Each accepted day is saved as a world state <i>W</i>(<i>c</i>, <i>d</i>), which initializes and resets the environment. History accumulates, so later days hold the messages, records, and files of every earlier day.</p>
+        </div>
+        <dl class="pp-facts">
+          <div><dt>Database records, final day</dt><dd>171.6K<!-- src: paper:tables/world_syn_basics.tex :: "DB records & 171.6K" --></dd></div>
+          <div><dt>Local files, final day</dt><dd>50.1<!-- src: paper:tables/world_syn_basics.tex :: "\# Local files & 50.1" --></dd></div>
+          <div><dt>World state size, final day</dt><dd>59.3 MiB<!-- src: paper:tables/world_syn_basics.tex :: "World state size & 59.3\,MiB" --></dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-5" aria-labelledby="pt-5" hidden>
+        <div class="pp-text">
+          <h3>Propose</h3>
+          <!-- src: paper:arxiv_preprint.tex (Task Generation) -->
+          <p>From a world state, the generator explores the live environment and proposes tasks that need all three interfaces. A diversity gate keeps the proposals least similar to accepted tasks, and each task ships with a verifier, a rubric, and a hint.</p>
+        </div>
+        <div class="pp-example">
+          <p class="pp-ex-k">Example, task <code>16bfe8-d8-h1</code></p>
+          <!-- src: repo:wildawm-harbor/dataset/val/16bfe8-d8-h1/instruction.md (first sentence, verbatim) -->
+          <blockquote>“I'm finalizing race-day kit for the Austin Half Marathon on 2027-02-21 and want to re-check the running-watch decision before race morning.”</blockquote>
+          <!-- src: repo:wildawm-harbor/dataset/val/16bfe8-d8-h1/task.toml ([metadata] interface_flow) -->
+          <ol class="flow" aria-label="Interface flow">
+            <li><span class="if if-mcp">MCP</span>calendar</li>
+            <li><span class="if if-cli">CLI</span>re-rank</li>
+            <li><span class="if if-gui">GUI</span>Amazon cart</li>
+            <li><span class="if if-cli">CLI</span>log</li>
+            <li><span class="if if-mcp">MCP</span>message</li>
+          </ol>
+        </div>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-6" aria-labelledby="pt-6" hidden>
+        <div class="pp-text">
+          <h3>Roll out</h3>
+          <!-- src: paper:arxiv_preprint.tex :: "we collect six rollouts per task, half with hints, from 18 model--harness pairs" -->
+          <p>Heterogeneous agents attempt every task: six rollouts, half with the hint, drawn from 18 model–harness pairs. Success counts become evidence of solvability and difficulty.</p>
+        </div>
+        <dl class="pp-facts pp-facts-list">
+          <!-- src: paper:arxiv_preprint.tex (Rollouts & Judgments: three open-source models and six harnesses) -->
+          <div><dt>Models</dt><dd>GLM-5.2, DeepSeek-V4-Flash, MiniMax-M3</dd></div>
+          <div><dt>Harnesses</dt><dd>OpenCode, Codex, Claude Code, Nanobot, OpenClaw, Hermes Agent</dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-7" aria-labelledby="pt-7" hidden>
+        <div class="pp-text">
+          <h3>Judge</h3>
+          <!-- src: paper:arxiv_preprint.tex (Rollouts & Judgments) -->
+          <p>Each rollout receives three verdicts: from the synthesized verifier, from an LLM judge that reads the task, rubric, and trajectory, and from an agent judge that inspects the world before and after.</p>
+        </div>
+        <dl class="pp-facts pp-facts-list">
+          <!-- src: paper:arxiv_preprint.tex :: "The synthesized programmatic verifier is finally used as the reward function during RL." -->
+          <div><dt>During RL</dt><dd>Only the programmatic verifier is kept, as the reward.</dd></div>
+        </dl>
+      </div>
+      <div class="pipe-panel" role="tabpanel" id="pp-8" aria-labelledby="pt-8" hidden>
+        <div class="pp-text">
+          <h3>Gate</h3>
+          <!-- src: paper:arxiv_preprint.tex :: "candidates that fail any gate are returned to the generator with diagnostic evidence for up to two revision rounds" -->
+          <p>Five quality gates turn the evidence into a decision. Failing candidates return to the generator with diagnostics for up to two revision rounds; the gates and their effect are below.</p>
+        </div>
+        <dl class="pp-facts">
+          <div><dt>Acceptance rate</dt><dd>53%<!-- src: paper:arxiv_preprint.tex :: "reaching 134 domains and 91 task types at a 53\% acceptance rate" --></dd></div>
+          <div><dt>Rollout success, no hint</dt><dd>21.3%<!-- src: paper:tables/task_syn_basics_full_width_v1.tex :: "SR w/o hint & 21.3\%" --></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="col sub">
+    <h3 id="gates-h">Five quality gates</h3>
+    <!-- src: paper-repo:experiments/task_synthesis/task_funnel/summary.json via experiments/scripts/plot_quality_gate_progression_wrap_v2.py (paper Figure fig:quality_gates): 2,551 sketches in, 341 accepted, 304 of them after feedback -->
+    <!-- src: paper:arxiv_preprint.tex :: "removing any gate reduces the average by 2.60--9.30 points" -->
+    <p>A candidate becomes a task only if it passes all five. Of 2,551 proposal sketches, 341 are accepted, and 304 of those pass only after feedback-driven revision. Training Qwen3.5-4B on data synthesized with one gate removed lowers its average score by 2.60–9.30 points. Select a gate in either panel.</p>
+  </div>
+  <div class="wide">
+    <div class="gate-duo">
+      <div class="gate-col">
+        <h4 class="gc-h">Candidates through the gates</h4>
+        <div class="prog js-only" id="progression" role="group" aria-label="Task candidates through the quality gates"><p class="loading">Loading the candidate progression…</p></div>
+      </div>
+      <div class="gate-col">
+        <h4 class="gc-h">Score with one gate removed</h4>
+        <div class="gates js-only" id="gates" role="group" aria-label="Quality-gate ablation"><p class="loading">Loading the gate study…</p></div>
+      </div>
+    </div>
+    <noscript><p class="note">The gate panels need JavaScript. Candidate progression (paper Figure fig:quality_gates): 2,551 sketches enter the diversity gate, then 642, 591, 570, 447, and 387 candidates reach the next gates, and 341 tasks are accepted. Paper Table <code>tab:ablation_study</code>: average 31.86 with all gates; 22.56 without judge consistency, 24.08 without initial unsatisfaction, 29.26 without task solvability, 26.37 without task difficulty, 27.91 without the counterfactual probe; 22.25 for the untrained Qwen3.5-4B.</p></noscript>
+  </div>
+</section>
+
+<!-- ======================================================================= DATASET -->
+<section class="sec" id="dataset" aria-labelledby="dataset-h">
+  <div class="col">
+    <h2 id="dataset-h"><span class="emo" aria-hidden="true">🗂️</span>Dataset</h2>
+    <!-- src: paper:arxiv_preprint.tex :: "XAI tasks consists of $4.2$ sub-tasks and $3.1$ interface switches on average, and 74.5\% revisit a previously used interface" -->
+    <p>Tasks are long and keep switching interfaces: a task has 4.2 sub-tasks and 3.1 interface switches on average, and 74.5% return to an interface used earlier, so an agent must carry state from one interface to the next.</p>
+  </div>
+  <div class="wide">
+    <dl class="stats" aria-label="Corpus statistics">
+      <div><dt>Personas</dt><dd>36<!-- src: paper:tables/world_syn_basics.tex :: "Personas & 36" --></dd></div>
+      <div><dt>World states</dt><dd>640<!-- src: paper:tables/world_syn_basics.tex :: "World states & 640" --></dd></div>
+      <div><dt>Tasks</dt><dd>341<!-- src: paper:tables/task_syn_basics_full_width_v1.tex :: "Tasks & 341" --></dd></div>
+      <div><dt>Hard / medium</dt><dd>273 / 68<!-- src: paper:tables/task_syn_basics_full_width_v1.tex :: "Hard tasks & 273" ; "Medium tasks & 68" --></dd></div>
+      <div><dt>Websites / MCP apps</dt><dd>15 / 8<!-- src: paper:tables/world_syn_basics.tex :: "Websites/MCPs & 15/8" --></dd></div>
+    </dl>
+    <p class="get">Download all 341 tasks from <a href="https://huggingface.co/datasets/ChilleD/WildAWM">Hugging Face</a>, or run them with <a href="https://hub.harborframework.com/datasets/wildawm">Harbor</a>.</p>
+
+    <div class="block">
+      <div class="block-head">
+        <h3>Tasks per persona</h3>
+        <div class="seg js-only" role="group" aria-label="Persona metric">
+          <button type="button" aria-pressed="true" data-pmetric="tasks">Accepted tasks</button>
+          <button type="button" aria-pressed="false" data-pmetric="states">World states</button>
+        </div>
+      </div>
+      <div class="pc js-only" id="persona-chart"><p class="loading">Loading the chart…</p></div>
+      <noscript><p class="note">The chart needs JavaScript. The paper's persona table lists 36 personas with 640 world states, 273 hard and 68 medium accepted tasks.</p></noscript>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <h3>Explore the validation tasks</h3>
+      </div>
+      <!-- src: repo:README.md :: "The released 341-task dataset (train 308 / val 33)" -->
+      <p class="block-sub">The 33 released validation tasks. Select a bar to filter the table, and open a row for its interface flow and exact instruction.</p>
+      <div class="vcharts js-only" id="val-charts">
+        <div class="vchart"><h4>Difficulty</h4><div id="chart-difficulty" class="loading">Loading…</div></div>
+        <div class="vchart"><h4>Website</h4><div id="chart-sites" class="loading">Loading…</div></div>
+        <div class="vchart"><h4>MCP domain</h4><div id="chart-domains" class="loading">Loading…</div></div>
+        <div class="vchart"><h4>Interface hops</h4><div id="chart-hops" class="loading">Loading…</div></div>
+      </div>
+      <div class="explorer js-only">
+        <div class="tools" id="task-tools">
+          <label class="field field-grow"><span class="visually-hidden">Search tasks</span><input class="input" id="f-search" type="search" placeholder="Search tasks, areas, sites…" autocomplete="off"></label>
+          <label class="field"><span class="visually-hidden">Website</span><select class="select" id="f-site"><option value="">All websites</option></select></label>
+          <label class="field"><span class="visually-hidden">MCP domain</span><select class="select" id="f-domain"><option value="">All MCP domains</option></select></label>
+          <label class="field"><span class="visually-hidden">Difficulty</span><select class="select" id="f-diff"><option value="">All difficulties</option></select></label>
+          <button class="btn-text" type="button" id="f-reset">Reset</button>
+          <span class="count" id="task-count" aria-live="polite"></span>
+        </div>
+        <div class="table-wrap tasks-wrap">
+          <table class="data tasks" id="task-table">
+            <caption class="visually-hidden">The 33 validation tasks. Column headers sort the table; open a task to show its interface flow and instruction.</caption>
+            <thead><tr>
+              <th scope="col" aria-sort="ascending" data-key="id"><button class="sort-btn" type="button">Task <span class="arrow" aria-hidden="true">▲</span></button></th>
+              <th scope="col" data-key="sites"><button class="sort-btn" type="button">Website <span class="arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col" data-key="domains"><button class="sort-btn" type="button">MCP <span class="arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col" class="num c-hops" data-key="hops"><button class="sort-btn" type="button">Hops <span class="arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col" class="c-diff" data-key="difficulty"><button class="sort-btn" type="button">Difficulty <span class="arrow" aria-hidden="true">↕</span></button></th>
+            </tr></thead>
+            <tbody><tr><td colspan="5" class="loading">Loading tasks…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <noscript><p class="note">The explorer needs JavaScript. Over the 33 validation tasks: 24 hard and 9 medium; websites Amazon 9, Google Maps 9, Booking 8, AllRecipes 5, Apple 1, Hugging Face 1.</p></noscript>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= RESULTS -->
+<section class="sec" id="results" aria-labelledby="results-h">
+  <div class="col">
+    <h2 id="results-h"><span class="emo" aria-hidden="true">📊</span>Results</h2>
+    <!-- src: paper:arxiv_preprint.tex :: "Training exclusively in \ours's synthesized worlds improves both model scales on all eight benchmarks, spanning web, claw, and computer-use agents." -->
+    <p>Trained only in WildAWM worlds, both Qwen models improve on all eight out-of-distribution benchmarks, across web, claw, and computer-use agents. Both checkpoints are on Hugging Face: <a href="https://huggingface.co/ChilleD/WildAWM-35B-A3B">WildAWM-35B-A3B</a> and <a href="https://huggingface.co/ChilleD/WildAWM-4B">WildAWM-4B</a>.</p>
+  </div>
+  <div class="wide">
+    <div class="block block-tight">
+      <div class="block-head">
+        <ul class="legend" id="gains-legend" aria-label="Legend">
+          <li><span class="mk mk-base" aria-hidden="true"></span>Qwen base</li>
+          <li><span class="mk mk-35" aria-hidden="true"></span>WildAWM 35B-A3B</li>
+          <li><span class="mk mk-4" aria-hidden="true"></span>WildAWM 4B</li>
+          <li><span class="mk mk-ref" aria-hidden="true"></span>GPT-6-Astra</li>
+        </ul>
+        <div class="seg js-only" role="group" aria-label="Results view">
+          <button type="button" aria-pressed="true" data-rview="gains">Gains</button>
+          <button type="button" aria-pressed="false" data-rview="table">Full table</button>
+        </div>
+      </div>
+      <div class="gains js-only" id="gains"></div>
+      <div class="table-wrap js-only" id="ood-wrap" hidden>
+        <table class="data ood" id="ood-table"><caption class="visually-hidden">Out-of-distribution benchmark results. Column headers sort the table.</caption><thead></thead><tbody><tr><td class="loading">Loading…</td></tr></tbody></table>
+      </div>
+      <!-- src: paper:tables/main_results.tex (caption) :: "We report pass rates for O2W, WA, and CLE, and mean score for the other benchmarks." -->
+      <p class="note">Pass rate for O2W, WA, and CLE; mean score for the others. Table rows marked † are numbers reported in the official papers.</p>
+      <noscript><p class="note">The chart needs JavaScript. Averages over the eight benchmarks: WildAWM 35B-A3B 53.42 versus Qwen3.6 42.84; WildAWM 4B 30.04 versus Qwen3.5 21.83.</p></noscript>
+    </div>
+  </div>
+  <div class="col">
+    <ul class="claims">
+      <!-- src: paper:arxiv_preprint.tex :: "particularly large gains on CLE ($+16.67$), OSV ($+16.06$), WebArena ($+13.72$), and CUG ($+12.22$)" -->
+      <li><b>Larger models gain more.</b> The 35B-A3B model improves most on ClawEval (<span class="num">+16.67</span>), OSWorld-Verified (<span class="num">+16.06</span>), WebArena (<span class="num">+13.72</span>), and CUA-Gym (<span class="num">+12.22</span>).</li>
+      <!-- src: paper:arxiv_preprint.tex :: "raises the 35B-A3B model's average score from $42.84$ to $53.42$" ; "matches GLM-5.2 on WebArena ($67.26$) and exceeds GPT-5.5 on O2W ($80.77$ vs.\ $72.22$)" -->
+      <li><b>The gap to frontier models narrows.</b> The 35B-A3B average rises from 42.84 to 53.42; it matches GLM-5.2 on WebArena (67.26) and exceeds GPT-5.5 on Online-Mind2Web (80.77 vs. 72.22).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================================= FINDINGS -->
+<section class="sec" id="findings" aria-labelledby="findings-h">
+  <div class="col">
+    <h2 id="findings-h"><span class="emo" aria-hidden="true">💡</span>Findings</h2>
+  </div>
+  <div class="wide">
+    <ul class="findings">
+      <li>
+        <h3>Hard, yet solvable</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "GPT-6-Astra achieves only about 60\% \passatk{1}" ; "even after eight attempts, GPT-6-Astra still fails on 27.3\% of tasks" ; "every task is solved by at least one agent" (24 heterogeneous agents) -->
+        <p>GPT-6-Astra reaches about 60% pass@1 on the validation tasks and still fails 27.3% of them after eight attempts. Yet every task is solved by at least one of 24 model–harness agents.</p>
+      </li>
+      <li>
+        <h3>Verifiers agree with judges</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "Our verifier achieves 95\% agreement with the majority, with a Cohen's $\kappa$ of 0.90" (100 randomly sampled rollouts) -->
+        <p>On 100 sampled rollouts, the synthesized verifier matches the majority verdict of agent judges 95% of the time, with Cohen's κ of 0.90.</p>
+      </li>
+      <li>
+        <h3>Richer, more diverse worlds</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "with a median size of 52.4K tokens, while CUA-Gym uses task-specific injected states with a median size of only 1.1K tokens" ; "\ours achieves consistently higher Vendi score across all sample sizes" -->
+        <p>A WildAWM environment state has a median of 52.4K tokens, against 1.1K for CUA-Gym, and it still scores higher Vendi diversity at every sample size.</p>
+      </li>
+      <li>
+        <h3>Synthesis keeps scaling</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "reaching 134 domains and 91 task types at a 53\% acceptance rate without clear saturation" -->
+        <p>Accepted tasks reach 134 domains and 91 task types at a 53% acceptance rate, without clear saturation.</p>
+      </li>
+      <li>
+        <h3>SFT teaches switching, RL teaches persistence</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "The interface-switch rate rises from 18.4\% to 24.7\% after SFT and 25.5\% after RL" ; "between 40 and 120 steps SFT gains only 9.7 points while \ours gains 17.0" -->
+        <p>Fine-tuning on GLM-5.2 trajectories raises the interface-switch rate from 18.4% to 24.7%. RL then adds long-horizon solving: between 40 and 120 steps, the share of solved tasks grows by 17.0 points for WildAWM, against 9.7 for SFT alone.</p>
+      </li>
+      <li>
+        <h3>Gains stay within the teacher's reach</h3>
+        <!-- src: paper:arxiv_preprint.tex :: "\ours gains most on the second and third quartiles ($+19.9$ and $+12.2$ points)" ; "On the hardest quartile, which is also challenging for the teacher, no variant shows a clear gain." -->
+        <p>Splitting the out-of-distribution tasks into difficulty quartiles, WildAWM gains most on the middle two (+19.9 and +12.2 points). On the hardest quartile, no variant gains clearly.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================================= EXAMPLES -->
+<section class="sec" id="examples" aria-labelledby="examples-h">
+  <div class="col">
+    <h2 id="examples-h"><span class="emo" aria-hidden="true">🎬</span>Examples</h2>
+    <p>Solved trials on released validation tasks, replayed step by step. Each step lists its tool calls, colored by interface; open a step for the arguments and results.</p>
+  </div>
+  <div class="wide">
+    <div class="tv" id="viewer">
+      <noscript><p class="note">The trajectory viewer needs JavaScript.</p></noscript>
+      <p class="loading js-only">Loading the viewer…</p>
+    </div>
+    <!-- src: repo:wildawm-harbor/jobs/<job>/<trial>/agent/trajectory.json, trimmed by project-web-page/scripts/build_data.py -->
+    <p class="note">Trajectories come from Harbor runs of the released tasks. Long tool outputs are trimmed, and values typed into password fields are redacted.</p>
+  </div>
+</section>
+
+<!-- ======================================================================= CITATION -->
+<section class="sec" id="citation" aria-labelledby="citation-h">
+  <div class="col">
+    <h2 id="citation-h"><span class="emo" aria-hidden="true">📝</span>Citation</h2>
+    <!-- BibTeX from the authors (arXiv 2610.26828, 2026-10-19). -->
+    <div class="term-wrap">
+      <button class="copy" type="button" data-copy="#bibtex">Copy</button>
+<pre class="bib" id="bibtex" tabindex="0" aria-label="BibTeX entry">@article{wang2026agentworldmodelwild,
+      title={Agent World Model in the Wild: Computer-Use Agent Environment Synthesis},
+      author={Zhaoyang Wang and Qianhui Wu and Haorui Wang and Simon Yu and Baolin Peng and Canwen Xu and Hao Cheng and Wenlin Yao and Boyi Liu and Yite Wang and Jianfeng Gao and Huaxiu Yao},
+      year={2026},
+      eprint={2610.26828},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2610.26828},
+}</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wide foot-in">
+    <span>Agent World Model in the Wild</span>
+    <span class="foot-links"><a href="https://github.com/MSR-Orchard/WildAWM/tree/project_page">Page source</a><a href="#top">Back to top</a></span>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+</body>
+</html>
