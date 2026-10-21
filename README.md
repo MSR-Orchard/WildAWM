@@ -25,7 +25,7 @@
 
 ## 📣 News
 
-- **Aug 19, 2026** 📢 WildAWM paper, code, environments and tasks, and trained checkpoints released.
+- **Oct 19, 2026** 📢 WildAWM paper, code, environments and tasks, and trained checkpoints released.
 
 ## 🔮 Resources
 
